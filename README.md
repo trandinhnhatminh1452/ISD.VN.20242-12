@@ -14,5 +14,5 @@
 - **Bùi Quang Tùng:** Place rush order  
 - **Trần Đình Nhật Minh:** Pay order
 - **Bùi Việt Hưng:** Place order  
-- **Đặng Thành Tựu:** Add/Update product  
+- **Đặng Thành Tựu:** Product Manage
 
