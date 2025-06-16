@@ -1,40 +1,58 @@
-// src/pages/Login.js
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Login.scss';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./Login.scss";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
-    // Xử lý đăng nhập (đây là ví dụ, bạn cần thay thế bằng API thực tế)
     try {
-      // Kiểm tra đơn giản
-      if (formData.email === 'admin@example.com' && formData.password === '123456') {
-        // Lưu thông tin đăng nhập (có thể sử dụng localStorage hoặc context)
-        localStorage.setItem('user', JSON.stringify({ email: formData.email }));
-        navigate('/'); // Chuyển hướng về trang chủ
+      const response = await fetch("http://localhost:8080/api/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        if (result && typeof result === "object") {
+          localStorage.setItem("user", JSON.stringify(result));
+          navigate("/");
+          window.location.reload();
+        } else {
+          console.warn("Server trả về không đúng định dạng JSON:", result);
+          alert(
+            "Đăng nhập thành công nhưng server không trả về dữ liệu người dùng hợp lệ."
+          );
+        }
       } else {
-        setError('Email hoặc mật khẩu không đúng');
+        alert(result.error || result.message || "Đăng nhập thất bại");
       }
     } catch (err) {
-      setError('Đã xảy ra lỗi khi đăng nhập');
+      console.error("Lỗi khi gửi request:", err);
+      alert("Lỗi kết nối đến server");
     }
   };
 
@@ -70,7 +88,9 @@ const Login = () => {
               placeholder="Nhập mật khẩu"
             />
           </div>
-          <button type="submit" className="login-button">Đăng nhập</button>
+          <button type="submit" className="login-button">
+            Đăng nhập
+          </button>
         </form>
         <div className="register-link">
           Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>

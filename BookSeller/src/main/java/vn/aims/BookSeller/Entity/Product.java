@@ -1,10 +1,14 @@
 package vn.aims.BookSeller.Entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.math.BigDecimal;
 import java.time.*;
 
 @Entity
+@Data
 @Table(name = "product")
 public class Product {
 
@@ -12,6 +16,20 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
     private Integer productId;
+
+    // Relationships with product details
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private ProductDetailBook productDetailBook;
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    private ProductDetailLP productDetailLP;
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    private ProductDetailDVD productDetailDVD;
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    private ProductDetailCD productDetailCD;
 
     @Column(name = "title")
     private String title;
@@ -32,21 +50,46 @@ public class Product {
     private BigDecimal price;
 
     @Column(name = "quantity")
-    private Integer quantity;
 
-    @Column(name = "entry_date")
-    private LocalDate entryDate;
+    public Integer getProductId() {
+        return productId;
+    }
 
-    @Column(name = "dimension")
-    private String dimension;
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
 
-    @Column(name = "weight")
-    private Float weight;
+    public ProductDetailBook getProductDetailBook() {
+        return productDetailBook;
+    }
 
-    @Column(name = "created_by")
-    private Integer createdBy;
+    public void setProductDetailBook(ProductDetailBook productDetailBook) {
+        this.productDetailBook = productDetailBook;
+    }
 
-    // Getters and Setters ...
+    public ProductDetailLP getProductDetailLP() {
+        return productDetailLP;
+    }
+
+    public void setProductDetailLP(ProductDetailLP productDetailLP) {
+        this.productDetailLP = productDetailLP;
+    }
+
+    public ProductDetailDVD getProductDetailDVD() {
+        return productDetailDVD;
+    }
+
+    public void setProductDetailDVD(ProductDetailDVD productDetailDVD) {
+        this.productDetailDVD = productDetailDVD;
+    }
+
+    public ProductDetailCD getProductDetailCD() {
+        return productDetailCD;
+    }
+
+    public void setProductDetailCD(ProductDetailCD productDetailCD) {
+        this.productDetailCD = productDetailCD;
+    }
 
     public String getTitle() {
         return title;
@@ -95,6 +138,20 @@ public class Product {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
+    private Integer quantity;
+
+    @Column(name = "entry_date")
+    private LocalDate entryDate;
+
+    @Column(name = "dimension")
+    private String dimension;
+
+    @Column(name = "weight")
+    private Float weight;
+
+    @Column(name = "created_by")
+    private Integer createdBy;
+
 
     public Integer getQuantity() {
         return quantity;
@@ -135,5 +192,6 @@ public class Product {
     public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
     }
+
 }
 

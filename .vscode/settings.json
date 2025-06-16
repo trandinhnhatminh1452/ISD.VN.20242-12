@@ -1,3 +1,15 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic"
-}
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.format.settings.url": "",
+    "java.format.settings.profile": "",
+    "java.import.gradle.wrapper.checksums": [],
+    "java.import.gradle.java.home": "",
+    "java.import.gradle.user.home": "",
+    "java.import.maven.userSettings": "",
+    "java.configuration.runtimes": [],
+    "java.configuration.maven.userSettings": "",
+    "java.compile.importAnnotations": true,
+    "java.compile.generateAnnotations": true
+  }
+  

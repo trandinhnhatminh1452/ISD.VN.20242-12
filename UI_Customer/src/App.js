@@ -9,17 +9,17 @@ import Navbar from "./components/NavBar/Navbar"; // Thanh điều hướng
 import About from "./pages/about/about";
 import Home from "./pages/Home/Home"; // Trang chủ
 import Footer from "./components/Footer/Footer"; // Footer
-import BookDetail from "./pages/BookDetail/BookDetail"; // Thêm trang BookDetail
+import ProductDetail from "./pages/ProductDetail/ProductDetail"; // Thêm trang ProductDetail
 import Contact from "./pages/Contact/contact";
-import Support from './pages/Support/support';
-import OrderGuide from './pages/Support/customer-support/order-guide';
-import ShippingGuide from './pages/Support/customer-support/shipping-guide';
-import PaymentGuide from './pages/Support/customer-support/payment-guide';
-import { CartProvider } from "./context/CartContext"; 
+import Support from "./pages/Support/support";
+import OrderGuide from "./pages/Support/customer-support/order-guide";
+import ShippingGuide from "./pages/Support/customer-support/shipping-guide";
+import PaymentGuide from "./pages/Support/customer-support/payment-guide";
+import { CartProvider } from "./context/CartContext";
 import { SearchProvider } from "./context/SearchContext";
-import { AuthProvider } from "./context/AuthContext"; 
-import Profile from './pages/Profile/Profile'; 
-import Payment from './components/Payment/Payment';
+import { AuthProvider } from "./context/AuthContext";
+import Profile from "./pages/Profile/Profile";
+import Payment from "./components/Payment/Payment";
 
 function App() {
   return (
@@ -32,16 +32,25 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/products" element={<Products />} />
-              <Route path="/cart" element={<Cart />} /> 
-              <Route path="/book/:bookId" element={<BookDetail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/product/:bookId" element={<ProductDetail />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/support" element={<Support />} />
-              <Route path="/customer-support/order-guide" element={<OrderGuide />} />
-              <Route path="/customer-support/shipping-guide" element={<ShippingGuide />} />
-              <Route path="/customer-support/payment-guide" element={<PaymentGuide />} />
-              <Route path="/login" element={<Login />} /> 
-              <Route path="/register" element={<Register />} /> 
-              <Route path="/profile" element={<Profile />} /> 
+              <Route
+                path="/customer-support/order-guide"
+                element={<OrderGuide />}
+              />
+              <Route
+                path="/customer-support/shipping-guide"
+                element={<ShippingGuide />}
+              />
+              <Route
+                path="/customer-support/payment-guide"
+                element={<PaymentGuide />}
+              />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/payment" element={<Payment />} />
             </Routes>
             <Footer />

@@ -1,10 +1,13 @@
 package vn.aims.BookSeller.Entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Data
 @Table(name = "cart")
 public class Cart {
 
@@ -22,7 +25,9 @@ public class Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)  // user_id nullable nếu có khách ko đăng nhập
+    private User user;
+
     // Getters and Setters ...
 }
-
-

@@ -1,48 +1,57 @@
 // src/pages/Register.js
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Register.scss';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./Register.scss";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
-    // Kiểm tra xác nhận mật khẩu
     if (formData.password !== formData.confirmPassword) {
-      setError('Mật khẩu không khớp');
+      setError("Mật khẩu không khớp");
       return;
     }
 
     try {
-      // Xử lý đăng ký (đây là ví dụ, bạn cần thay thế bằng API thực tế)
-      // Kiểm tra đơn giản
-      if (formData.email.includes('@') && formData.password.length >= 6) {
-        // Lưu thông tin đăng ký (có thể sử dụng localStorage hoặc context)
-        localStorage.setItem('user', JSON.stringify({ email: formData.email, name: formData.name }));
-        navigate('/login'); // Chuyển hướng đến trang đăng nhập
+      const response = await fetch("http://localhost:8080/api/user/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: formData.name, // map đúng tên trong DTO backend
+          email: formData.email,
+          password: formData.password,
+          phone: "", // thêm nếu cần
+        }),
+      });
+
+      if (response.ok) {
+        navigate("/login");
       } else {
-        setError('Email không hợp lệ hoặc mật khẩu phải có ít nhất 6 ký tự');
+        const errorText = await response.text();
+        setError(errorText || "Đăng ký thất bại");
       }
     } catch (err) {
-      setError('Đã xảy ra lỗi khi đăng ký');
+      setError("Lỗi kết nối đến server");
     }
   };
 
@@ -104,7 +113,9 @@ const Register = () => {
               placeholder="Xác nhận mật khẩu"
             />
           </div>
-          <button type="submit" className="register-button">Đăng ký</button>
+          <button type="submit" className="register-button">
+            Đăng ký
+          </button>
         </form>
         <div className="login-link">
           Đã có tài khoản? <Link to="/login">Đăng nhập ngay</Link>

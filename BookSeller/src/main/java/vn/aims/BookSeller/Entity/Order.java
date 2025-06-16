@@ -1,12 +1,15 @@
 package vn.aims.BookSeller.Entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 @Entity
+@Data
 @Table(name = "order")
 public class Order {
 
@@ -14,6 +17,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private Integer orderId;
+
+    // Quan hệ nhiều đơn hàng thuộc 1 user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)  // nullable nếu khách không đăng ký
+    private User user;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -62,4 +70,3 @@ public class Order {
 
     // Getters and Setters ...
 }
-

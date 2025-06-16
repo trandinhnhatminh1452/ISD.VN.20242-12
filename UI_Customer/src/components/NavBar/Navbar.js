@@ -29,27 +29,27 @@ const Navbar = () => {
   // Đóng menu khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (event.target.closest('.user-menu-container') === null) {
+      if (event.target.closest(".user-menu-container") === null) {
         setShowUserMenu(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   const scrollToResults = () => {
     if (searchResultsRef.current) {
-      searchResultsRef.current.scrollIntoView({ behavior: 'smooth' });
+      searchResultsRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   const onInputChange = async (e) => {
     const value = e.target.value;
     setInputValue(value);
-    if (value.trim() === '') {
+    if (value.trim() === "") {
       setShowSuggestions(false);
       setSuggestions([]);
       return;
@@ -57,13 +57,15 @@ const Navbar = () => {
 
     try {
       const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(value)}&maxResults=5`
+        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+          value
+        )}&maxResults=5`
       );
       const data = await response.json();
       setSuggestions(data.items || []);
       setShowSuggestions(true);
     } catch (error) {
-      console.error('Error fetching suggestions:', error);
+      console.error("Error fetching suggestions:", error);
       setSuggestions([]);
     }
   };
@@ -86,13 +88,12 @@ const Navbar = () => {
             <img src="/G12.png" alt="G12 Book Store Logo" />
           </Link>
         </div>
-
       </div>
       <div className="navbar-center">
         <ul>
-        <li>
-        <Link to="/">Trang chủ</Link>
-        </li>
+          <li>
+            <Link to="/">Trang chủ</Link>
+          </li>
           <li>
             <Link to="/products">Sản phẩm</Link>
           </li>
@@ -103,13 +104,32 @@ const Navbar = () => {
             <Link to="/contact">Liên hệ</Link>
           </li>
           <li className="support-dropdown">
-            <div className="dropdown-container" onMouseEnter={() => setShowSupportMenu(true)} onMouseLeave={() => setShowSupportMenu(false)}>
+            <div
+              className="dropdown-container"
+              onMouseEnter={() => setShowSupportMenu(true)}
+              onMouseLeave={() => setShowSupportMenu(false)}
+            >
               <Link to="/support">Hỗ trợ</Link>
               {showSupportMenu && (
                 <div className="support-menu">
-                  <Link to="/customer-support/order-guide" className="menu-item">Hướng dẫn đặt hàng</Link>
-                  <Link to="/customer-support/shipping-guide" className="menu-item">Hình thức vận chuyển</Link>
-                  <Link to="/customer-support/payment-guide" className="menu-item">Hướng dẫn thanh toán</Link>
+                  <Link
+                    to="/customer-support/order-guide"
+                    className="menu-item"
+                  >
+                    Hướng dẫn đặt hàng
+                  </Link>
+                  <Link
+                    to="/customer-support/shipping-guide"
+                    className="menu-item"
+                  >
+                    Hình thức vận chuyển
+                  </Link>
+                  <Link
+                    to="/customer-support/payment-guide"
+                    className="menu-item"
+                  >
+                    Hướng dẫn thanh toán
+                  </Link>
                 </div>
               )}
             </div>
@@ -118,12 +138,15 @@ const Navbar = () => {
       </div>
       <div className="navbar-right">
         <div className="search-container">
-          <form className="navbar-search" onSubmit={(e) => {
-            e.preventDefault();
-            setSearchTerm(inputValue);
-            setShowSuggestions(false);
-            scrollToResults();
-          }}>
+          <form
+            className="navbar-search"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setSearchTerm(inputValue);
+              setShowSuggestions(false);
+              scrollToResults();
+            }}
+          >
             <input
               className="search-input"
               type="text"
@@ -155,20 +178,32 @@ const Navbar = () => {
             style={{
               marginLeft: "18px",
               verticalAlign: "middle",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
           />
           {showUserMenu && (
             <div className="user-menu">
               {user ? (
                 <>
-                  <Link to="/profile" className="menu-item">{user.username}</Link>
-                  <button onClick={logout} className="menu-item">Đăng xuất</button>
+                  <Link to="/profile" className="menu-item">
+                    Tài Khoản
+                  </Link>
+                  <div
+                    onClick={logout}
+                    className="menu-item"
+                    style={{ cursor: "pointer" }}
+                  >
+                    Đăng xuất
+                  </div>
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="menu-item">Đăng nhập</Link>
-                  <Link to="/register" className="menu-item">Đăng ký</Link>
+                  <Link to="/login" className="menu-item">
+                    Đăng nhập
+                  </Link>
+                  <Link to="/register" className="menu-item">
+                    Đăng ký
+                  </Link>
                 </>
               )}
             </div>

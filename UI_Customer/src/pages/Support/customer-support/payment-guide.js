@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaAngleRight } from 'react-icons/fa';
 import "./payment-guide.scss";
-import "../../../pages/BookDetail/BookDetail.scss";
 
 
 const PaymentGuide = () => {

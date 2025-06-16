@@ -1,4 +1,3 @@
-// src/pages/Cart.jsx
 import React, { useEffect, useState } from "react";
 import { FaTrash, FaAngleRight } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,56 +15,47 @@ const Cart = () => {
     return new Intl.NumberFormat("vi-VN").format(price);
   };
 
-  // Update total price when cart changes
   useEffect(() => {
     const total = cart.reduce((total, book) => {
-      const bookPrice = book.saleInfo?.listPrice?.amount || 999999;
+      const bookPrice = book.price || 999999;
       const qty = book.quantity || 1;
       return total + bookPrice * qty;
     }, 0);
     setTotalPrice(total);
   }, [cart]);
 
-  const handleQtyChange = (bookId, type, value = null) => {
+  const handleQtyChange = (productId, type, value = null) => {
     const updatedCart = cart.map((book) => {
-      if (book.id === bookId) {
+      if (book.productId === productId) {
         const currentQty = book.quantity || 1;
         const newQty = value !== null
-          ? parseInt(value) < 1 ? 1 : Math.min(999, parseInt(value))
+          ? Math.max(1, Math.min(999, parseInt(value)))
           : type === "inc"
-            ? currentQty + 1
-            : type === "dec"
-            ? Math.max(1, currentQty - 1)
-            : currentQty;
-  
-        // Cập nhật inputQty ngay tại đây
-        setInputQty((prev) => ({
-          ...prev,
-          [bookId]: newQty,
-        }));
-  
+          ? currentQty + 1
+          : Math.max(1, currentQty - 1);
+
         return { ...book, quantity: newQty };
       }
       return book;
     });
-  
+
     const total = updatedCart.reduce((total, book) => {
-      const bookPrice = book.saleInfo?.listPrice?.amount || 999999;
+      const price = book.price || 999999;
       const qty = book.quantity || 1;
-      return total + bookPrice * qty;
+      return total + price * qty;
     }, 0);
+
     setTotalPrice(total);
-  
     setCart(updatedCart);
   };
-  
+
   const handleCheckout = () => {
     const cartItems = cart.map(book => ({
       id: book.id,
-      name: book.volumeInfo.title,
-      price: book.saleInfo?.listPrice?.amount || 999999,
+      name: book.title,
+      price: book.price || 999999,
       quantity: book.quantity || 1,
-      image: book.volumeInfo.imageLinks?.thumbnail
+      image: book.image
     }));
     navigate('/payment', { state: { cartItems } });
   };
@@ -73,16 +63,13 @@ const Cart = () => {
   return (
     <>
       <div className="breadcrumb">
-              <Link to="/" className="breadcrumb-link">
-                Trang chủ
-              </Link>
-              <FaAngleRight className="breadcrumb-sep" />
-              <Link to="/products" className="breadcrumb-next">
-                Sản phẩm
-              </Link>
-              <FaAngleRight className="breadcrumb-sep" />
-              <span className="breadcrumb-current">Giỏ hàng</span>
-            </div>
+        <Link to="/" className="breadcrumb-link">Trang chủ</Link>
+        <FaAngleRight className="breadcrumb-sep" />
+        <Link to="/products" className="breadcrumb-next">Sản phẩm</Link>
+        <FaAngleRight className="breadcrumb-sep" />
+        <span className="breadcrumb-current">Giỏ hàng</span>
+      </div>
+
       <div className="cart-layout">
         <div className="cart cart-main">
           <h2>Giỏ hàng của bạn</h2>
@@ -101,28 +88,29 @@ const Cart = () => {
                 </thead>
                 <tbody>
                   {cart.map((book) => {
-                    const price = book.saleInfo?.listPrice?.amount || 999999;
+                    const price = book.price || 999999;
                     const qty = book.quantity || 1;
+
                     return (
                       <tr key={book.id} className="cart-row">
                         <td className="cart-product-info">
                           <Link to={`/book/${book.id}`}>
-                            <img
+                            {/* <img
                               className="cart-img"
-                              src={
-                                book.volumeInfo.imageLinks?.thumbnail ||
-                                "https://via.placeholder.com/150x225?text=No+Image"
-                              }
-                              alt={book.volumeInfo.title}
-                            />
+                              src={image}
+                              alt={book.title || "Sản phẩm"}
+                              onError={(e) => {
+                                e.target.src = '/default-book-cover.jpg';
+                              }}
+                            /> */}
                           </Link>
                           <div className="cart-info-text">
                             <Link to={`/book/${book.id}`} className="cart-title">
-                              {book.volumeInfo.title}
+                              {book.title}
                             </Link>
                             <button
                               className="cart-remove"
-                              onClick={() => removeFromCart(book.id)}
+                              onClick={() => removeFromCart(book.productId)}
                             >
                               <FaTrash size={20} color="#e53935" />
                             </button>
@@ -134,43 +122,35 @@ const Cart = () => {
                         </td>
                         <td>
                           <div className="cart-qty">
-                            <button onClick={() => handleQtyChange(book.id, "dec")}>
-                              -
-                            </button>
+                            <button onClick={() => handleQtyChange(book.productId, "dec")}>-</button>
                             <input
                               type="number"
-                              value={inputQty[book.id] !== undefined ? inputQty[book.id] : qty}
+                              value={inputQty[book.productId] !== undefined ? inputQty[book.productId] : qty}
                               onChange={(e) => {
                                 const value = e.target.value;
-                                // Cho phép giá trị rỗng hoặc số từ 0-999
                                 if (value === "" || /^[0-9]{0,3}$/.test(value)) {
                                   setInputQty((prev) => ({
                                     ...prev,
-                                    [book.id]: value,
+                                    [book.productId]: value,
                                   }));
-                                  // Cập nhật ngay lập tức khi thay đổi
-                                  if (value !== "" && !isNaN(value)) {
-                                    handleQtyChange(book.id, null, value);
-                                  }
                                 }
                               }}
-                              onBlur={() => {
-                                const value = inputQty[book.id];
+                              onBlur={(e) => {
+                                const value = e.target.value;
                                 if (value === "" || isNaN(value)) {
-                                  // Nếu trống hoặc không hợp lệ, reset lại ô input
                                   setInputQty((prev) => {
                                     const updated = { ...prev };
-                                    delete updated[book.id];
+                                    delete updated[book.productId];
                                     return updated;
                                   });
+                                } else {
+                                  handleQtyChange(book.productId, null, value);
                                 }
                               }}
                               min="1"
                               max="999"
                             />
-                            <button onClick={() => handleQtyChange(book.id, "inc")}>
-                              +
-                            </button>
+                            <button onClick={() => handleQtyChange(book.productId, "inc")}>+</button>
                           </div>
                         </td>
                         <td className="cart-total">
@@ -189,9 +169,7 @@ const Cart = () => {
             </>
           )}
         </div>
-        <div className="cart-sidebar">
-          {/* Sidebar is now empty or you can remove this div entirely if not needed */}
-        </div>
+        <div className="cart-sidebar"></div>
       </div>
     </>
   );

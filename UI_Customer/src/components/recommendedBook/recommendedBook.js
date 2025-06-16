@@ -5,7 +5,12 @@ import formatPrice from "../../utils/formatPrice";
 
 const BOOKS_PER_SLIDE = 5;
 
-const RecommendedBooks = ({ books, recIndex, setRecIndex, title = "Có thể bạn cũng thích" }) => {
+const RecommendedBooks = ({
+  books,
+  recIndex,
+  setRecIndex,
+  title = "Có thể bạn cũng thích",
+}) => {
   const maxIndex = Math.max(0, books.length - BOOKS_PER_SLIDE);
   const handlePrev = () => setRecIndex((i) => Math.max(i - 1, 0));
   const handleNext = () => setRecIndex((i) => Math.min(i + 1, maxIndex));
@@ -34,34 +39,25 @@ const RecommendedBooks = ({ books, recIndex, setRecIndex, title = "Có thể b�
           >
             {books.map((b) => (
               <Link
-                to={`/book/${b.id}`}
-                key={b.id}
+                to={`/product/${b.productId}`}
+                key={b.productId}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 <div className="recommend-item">
-                  <img
+                  {/* <img
                     src={
-                      b.volumeInfo.imageLinks?.thumbnail ||
-                      "https://via.placeholder.com/120x180?text=No+Image"
+                      b.image || "/default-book-cover.jpg"
                     }
-                    alt={b.volumeInfo.title}
-                  />
-                  <div className="recommend-title">{b.volumeInfo.title}</div>
+                    alt={b.title || "Sách"}
+                    onError={(e) => {
+                      e.target.src = "/default-book-cover.jpg";
+                    }}
+                  /> */}
+                  <div className="recommend-title">{b.title || "Không rõ"}</div>
                   <div className="recommend-prices">
                     <span className="recommend-price">
-                      {b.saleInfo?.listPrice?.amount
-                        ? formatPrice(b.saleInfo.listPrice.amount)
-                        : formatPrice(999999)}
-                      ₫
+                      {formatPrice(b.price || 999999)}
                     </span>
-                    {b.saleInfo?.listPrice?.amount &&
-                      b.saleInfo?.retailPrice?.amount &&
-                      b.saleInfo.retailPrice.amount >
-                        b.saleInfo.listPrice.amount && (
-                        <span className="recommend-old-price">
-                          {formatPrice(b.saleInfo.retailPrice.amount)}₫
-                        </span>
-                      )}
                   </div>
                 </div>
               </Link>

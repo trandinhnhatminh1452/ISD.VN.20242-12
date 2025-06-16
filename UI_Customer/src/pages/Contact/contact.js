@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaMapMarkerAlt, FaEnvelope, FaPhone } from "react-icons/fa";
-import "../../pages/BookDetail/BookDetail.scss";
+import "../../pages/ProductDetail/ProductDetail.scss";
 import "./contact.scss";
 
 const Contact = () => {

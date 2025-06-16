@@ -1,6 +1,8 @@
 package vn.aims.BookSeller.Entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.time.LocalDate;
 
 @Entity
@@ -12,8 +14,8 @@ public class ProductDetailLP {
     private Integer productId;
 
     @OneToOne
-    @JoinColumn(name = "product_id")
-    @MapsId
+    @PrimaryKeyJoinColumn
+    @JsonBackReference
     private Product product;
 
     @Column(name = "artists")
@@ -31,6 +33,60 @@ public class ProductDetailLP {
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
-    // Getters and Setters ...
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public String getArtists() {
+        return artists;
+    }
+
+    public void setArtists(String artists) {
+        this.artists = artists;
+    }
+
+    public String getRecordLabel() {
+        return recordLabel;
+    }
+
+    public void setRecordLabel(String recordLabel) {
+        this.recordLabel = recordLabel;
+    }
+
+    public String getTracklist() {
+        return tracklist;
+    }
+
+    public void setTracklist(String tracklist) {
+        this.tracklist = tracklist;
+    }
+
+    public LocalDate getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(LocalDate releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
 }
 
