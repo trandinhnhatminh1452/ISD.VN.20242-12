@@ -16,7 +16,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Dùng IDENTITY cho PostgreSQL
     @Column(name = "user_id", nullable = false)
-    private Integer id;
+    private Long id;
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -47,11 +47,11 @@ public class User {
 private Timestamp created_at;
 
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

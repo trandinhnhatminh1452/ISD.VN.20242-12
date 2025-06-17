@@ -57,12 +57,12 @@ const Navbar = () => {
 
     try {
       const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+        `http://localhost:8080/api/product/search?q=${encodeURIComponent(
           value
-        )}&maxResults=5`
+        )}&page=0&size=5`
       );
       const data = await response.json();
-      setSuggestions(data.items || []);
+      setSuggestions(data.content || []); // data là một mảng sản phẩm
       setShowSuggestions(true);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
@@ -71,10 +71,10 @@ const Navbar = () => {
   };
 
   const handleSuggestionClick = (suggestion) => {
-    setInputValue(suggestion.volumeInfo.title);
-    setSearchTerm(suggestion.volumeInfo.title);
+    setInputValue(suggestion.title);
+    setSearchTerm(suggestion.title);
     setShowSuggestions(false);
-    window.location.href = `/book/${suggestion.id}`;
+    window.location.href = `/product/${suggestion.productId}`;
   };
 
   return (
@@ -166,7 +166,7 @@ const Navbar = () => {
                   className="suggestion-item"
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
-                  {suggestion.volumeInfo.title}
+                  {suggestion.title}
                 </div>
               ))}
             </div>

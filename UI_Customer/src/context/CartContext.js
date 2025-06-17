@@ -23,11 +23,11 @@ export const CartProvider = ({ children }) => {
         const newCart = [...prevCart];
         newCart[existingBookIndex] = {
           ...newCart[existingBookIndex],
-          quantity: newCart[existingBookIndex].quantity + 1, // KHÔNG cần || 1 vì lúc thêm đã là 1 rồi
+          quantity: newCart[existingBookIndex].quantity + book.quantity,
         };
         return newCart;
       } else {
-        return [...prevCart, { ...book, quantity: 1 }];
+        return [...prevCart, { ...book }];
       }
     });
   };
@@ -39,8 +39,13 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  // Lưu giỏ hàng vào localStorage mỗi khi thay đổi
+  React.useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
   return (
-    <CartContext.Provider value={{ cart, setCart, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cart,setCart, addToCart, removeFromCart }}>
       {children}
     </CartContext.Provider>
   );

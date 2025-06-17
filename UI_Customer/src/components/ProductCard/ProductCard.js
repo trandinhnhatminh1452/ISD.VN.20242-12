@@ -3,6 +3,7 @@ import React from "react";
 import { useCart } from "../../context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import { FaCartPlus } from "react-icons/fa";
+import { useAuth } from "../../context/AuthContext";
 import "./ProductCard.scss";
 
 // Hàm định dạng giá tiền với dấu phân cách
@@ -19,7 +20,9 @@ const ProductCard = ({ book }) => {
 
   const price = book.price || 999999;
   const title = book.title || "No title";
-  const image = book.image || "/default-book-cover.jpg";
+  const image = book.image
+    ? `http://localhost:8080/image/${book.image}`
+    : "/default-book-cover.jpg";
 
   const bookToAdd = {
     ...book,
@@ -27,15 +30,21 @@ const ProductCard = ({ book }) => {
     quantity: 1,
   };
 
+  const { user } = useAuth();
+
   const handleAddToCart = () => {
-    const token = localStorage.getItem("accessToken"); // kiểm tra token
-    if (!token) {
+    if (!user) {
       alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
       navigate("/login");
       return;
     }
 
-    addToCart(bookToAdd); // thêm vào giỏ hàng nếu đã đăng nhập
+    try {
+      addToCart(bookToAdd);
+    } catch (error) {
+      console.error("Lỗi khi thêm vào giỏ hàng:", error);
+      alert("Có lỗi khi thêm vào giỏ hàng. Vui lòng thử lại.");
+    }
   };
 
   return (

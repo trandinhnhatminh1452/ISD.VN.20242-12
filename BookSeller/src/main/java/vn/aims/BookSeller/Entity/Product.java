@@ -50,6 +50,25 @@ public class Product {
     private BigDecimal price;
 
     @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "entry_date")
+    private LocalDate entryDate;
+
+    @Column(name = "dimension")
+    private String dimension;
+
+    @Column(name = "weight")
+    private Float weight;
+
+    @Column(name = "created_by")
+    private Integer createdBy;
+
+    // ✅ Thêm trường image
+    @Column(name = "image")
+    private String image;
+
+    // --- GETTER & SETTER ---
 
     public Integer getProductId() {
         return productId;
@@ -138,20 +157,6 @@ public class Product {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
-    private Integer quantity;
-
-    @Column(name = "entry_date")
-    private LocalDate entryDate;
-
-    @Column(name = "dimension")
-    private String dimension;
-
-    @Column(name = "weight")
-    private Float weight;
-
-    @Column(name = "created_by")
-    private Integer createdBy;
-
 
     public Integer getQuantity() {
         return quantity;
@@ -193,5 +198,12 @@ public class Product {
         this.createdBy = createdBy;
     }
 
-}
+    // ✅ Getter & Setter cho image
+    public String getImage() {
+        return image;
+    }
 
+    public void setImage(String image) {
+        this.image = image;
+    }
+}

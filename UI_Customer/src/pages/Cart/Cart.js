@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import { FaTrash, FaAngleRight } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext"; // Thêm dòng này
 import "./Cart.scss";
 
 const Cart = () => {
   const { cart, removeFromCart, setCart } = useCart();
+  const { user } = useAuth(); // Lấy user từ AuthContext
   const [totalPrice, setTotalPrice] = useState(0);
   const [inputQty, setInputQty] = useState({});
   const navigate = useNavigate();
+
+  const BASE_IMAGE_URL = "http://localhost:8080/image/";
 
   const formatPrice = (price) => {
     if (!price) return 999999;
@@ -28,11 +32,12 @@ const Cart = () => {
     const updatedCart = cart.map((book) => {
       if (book.productId === productId) {
         const currentQty = book.quantity || 1;
-        const newQty = value !== null
-          ? Math.max(1, Math.min(999, parseInt(value)))
-          : type === "inc"
-          ? currentQty + 1
-          : Math.max(1, currentQty - 1);
+        const newQty =
+          value !== null
+            ? Math.max(1, Math.min(999, parseInt(value)))
+            : type === "inc"
+            ? currentQty + 1
+            : Math.max(1, currentQty - 1);
 
         return { ...book, quantity: newQty };
       }
@@ -50,14 +55,20 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    const cartItems = cart.map(book => ({
+    if (!user) {
+      alert("Bạn cần đăng nhập để tiếp tục thanh toán.");
+      navigate("/login");
+      return;
+    }
+
+    const cartItems = cart.map((book) => ({
       id: book.id,
       name: book.title,
       price: book.price || 999999,
       quantity: book.quantity || 1,
-      image: book.image
+      image: book.image,
     }));
-    navigate('/payment', { state: { cartItems } });
+    navigate("/payment", { state: { cartItems } });
   };
 
   return (
@@ -94,18 +105,21 @@ const Cart = () => {
                     return (
                       <tr key={book.id} className="cart-row">
                         <td className="cart-product-info">
-                          <Link to={`/book/${book.id}`}>
-                            {/* <img
+                          <Link to={`/product/${book.productId}`}>
+                            <img
                               className="cart-img"
-                              src={image}
+                              src={`${BASE_IMAGE_URL}${book.image}`}
                               alt={book.title || "Sản phẩm"}
                               onError={(e) => {
-                                e.target.src = '/default-book-cover.jpg';
+                                e.target.src = "/default-book-cover.jpg";
                               }}
-                            /> */}
+                            />
                           </Link>
                           <div className="cart-info-text">
-                            <Link to={`/book/${book.id}`} className="cart-title">
+                            <Link
+                              to={`/product/${book.productId}`}
+                              className="cart-title"
+                            >
                               {book.title}
                             </Link>
                             <button
@@ -117,15 +131,20 @@ const Cart = () => {
                           </div>
                         </td>
                         <td className="cart-price">
-                          {formatPrice(price)}
-                          <span className="cart-currency">₫</span>
+                          {formatPrice(price)}<span className="cart-currency">₫</span>
                         </td>
                         <td>
                           <div className="cart-qty">
-                            <button onClick={() => handleQtyChange(book.productId, "dec")}>-</button>
+                            <button
+                              onClick={() => handleQtyChange(book.productId, "dec")}
+                            >-</button>
                             <input
                               type="number"
-                              value={inputQty[book.productId] !== undefined ? inputQty[book.productId] : qty}
+                              value={
+                                inputQty[book.productId] !== undefined
+                                  ? inputQty[book.productId]
+                                  : qty
+                              }
                               onChange={(e) => {
                                 const value = e.target.value;
                                 if (value === "" || /^[0-9]{0,3}$/.test(value)) {
@@ -150,12 +169,13 @@ const Cart = () => {
                               min="1"
                               max="999"
                             />
-                            <button onClick={() => handleQtyChange(book.productId, "inc")}>+</button>
+                            <button
+                              onClick={() => handleQtyChange(book.productId, "inc")}
+                            >+</button>
                           </div>
                         </td>
                         <td className="cart-total">
-                          {formatPrice(price * qty)}
-                          <span className="cart-currency">₫</span>
+                          {formatPrice(price * qty)}<span className="cart-currency">₫</span>
                         </td>
                       </tr>
                     );
@@ -165,7 +185,9 @@ const Cart = () => {
               <div className="cart-summary">
                 Tổng tiền: <span>{formatPrice(totalPrice)}₫</span>
               </div>
-              <button className="cart-checkout-btn" onClick={handleCheckout}>Thanh toán</button>
+              <button className="cart-checkout-btn" onClick={handleCheckout}>
+                Thanh toán
+              </button>
             </>
           )}
         </div>
