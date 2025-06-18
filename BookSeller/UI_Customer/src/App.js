@@ -20,6 +20,7 @@ import { SearchProvider } from "./context/SearchContext";
 import { AuthProvider } from "./context/AuthContext"; 
 import Profile from './pages/Profile/Profile'; 
 import Payment from './components/Payment/Payment';
+import InvoiceDetail from './pages/InvoiceDetail/InvoiceDetail';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
               <Route path="/register" element={<Register />} /> 
               <Route path="/profile" element={<Profile />} /> 
               <Route path="/payment" element={<Payment />} />
+              <Route path="/invoice/:id" element={<InvoiceDetail />} />
             </Routes>
             <Footer />
           </AuthProvider>

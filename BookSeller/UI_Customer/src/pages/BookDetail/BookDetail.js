@@ -1,56 +1,67 @@
 import { useCart } from "../../context/CartContext";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom"; // Để lấy params từ URL
 import { FaAngleRight } from "react-icons/fa"; // Thêm biểu tượng giỏ hàng
+import { productAPI } from "../../utils/api";
 import "./BookDetail.scss";
 import RecommendedBooks from "../../components/recommendedBook/recommendedBook";
 
 const BookDetail = () => {
   const { bookId } = useParams(); // Lấy ID sách từ URL
-  const [book, setBook] = React.useState(null);
   const { addToCart } = useCart();
-  const [quantity, setQuantity] = React.useState(1);
-  const stock = 100; // giả lập tồn kho
-  const [recommended, setRecommended] = React.useState([]);
+  const [book, setBook] = useState(null);
+  const [bookDetails, setBookDetails] = useState(null);
+  const [recommended, setRecommended] = useState([]);
   const [recIndex, setRecIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchBookDetail = async () => {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes/${bookId}`
-      );
-      const data = await response.json();
-      setBook(data);
+      setLoading(true);
+      setError(null);
+      try {
+        // Fetch product basic info
+        const productData = await productAPI.getProductById(bookId);
+        setBook(productData);
+        
+        // Fetch product details (book details)
+        try {
+          const detailsData = await productAPI.getProductDetails(bookId);
+          setBookDetails(detailsData);
+        } catch (detailsError) {
+          console.warn("No book details found:", detailsError);
+          setBookDetails(null);
+        }
+      } catch (error) {
+        console.error("Error fetching book details:", error);
+        setError("Failed to load book details. Please try again.");
+        setBook(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchBookDetail();
   }, [bookId]);
 
-  // Fetch recommended books based on author or subject
-  React.useEffect(() => {
+  useEffect(() => {
     if (!book) return;
-    let query = "sach";
-    if (book.volumeInfo?.authors && book.volumeInfo.authors.length > 0) {
-      query = book.volumeInfo.authors[0];
-    } else if (
-      book.volumeInfo?.categories &&
-      book.volumeInfo.categories.length > 0
-    ) {
-      query = book.volumeInfo.categories[0];
-    }
-    const fetchRecommended = async () => {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-          query
-        )}&maxResults=12`
-      );
-      const data = await response.json();
-      setRecommended((data.items || []).filter((b) => b.id !== bookId));
-      setRecIndex(0); // reset slider when book changes
+    
+    const fetchRelatedBooks = async () => {
+      try {
+        const relatedData = await productAPI.getRelatedProducts(bookId);
+        setRecommended(relatedData);
+      } catch (error) {
+        console.error("Error fetching related books:", error);
+        setRecommended([]);
+      }
     };
-    fetchRecommended();
-  }, [book]);
+
+    fetchRelatedBooks();
+  }, [book, bookId]);
 
   // Helper to format price
   const formatPrice = (price) => {
@@ -60,7 +71,7 @@ const BookDetail = () => {
 
   const handleQuantityChange = (type) => {
     setQuantity((prev) => {
-      if (type === "inc") return prev < stock ? prev + 1 : prev;
+      if (type === "inc") return prev < book.quantity ? prev + 1 : prev;
       if (type === "dec") return prev > 1 ? prev - 1 : prev;
       return prev;
     });
@@ -68,17 +79,17 @@ const BookDetail = () => {
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
-      addToCart(book);
+      addToCart({ ...book, id: book.productId || book.id });
     }
   };
 
   const handleBuyNow = () => {
     const item = {
       id: book.id,
-      name: book.volumeInfo.title,
-      price: book.saleInfo?.listPrice?.amount || 999999,
+      name: book.title || "Không có tên",
+      price: book.price || 0,
       quantity: quantity,
-      image: book.volumeInfo.imageLinks?.thumbnail
+      image: book.imageUrl || "/placeholder-book.jpg"
     };
     navigate('/payment', { state: { cartItems: [item] } });
   };
@@ -99,26 +110,25 @@ const BookDetail = () => {
           Sản phẩm
         </Link>
         <FaAngleRight className="breadcrumb-sep" />
-        <span className="breadcrumb-current">{book.volumeInfo.title}</span>
+        <span className="breadcrumb-current">{book.title || "Không có tên"}</span>
       </div>
       <div className="book-detail">
         <div className="book-main">
           <div className="book-image">
             <img
-              src={book.volumeInfo.imageLinks?.thumbnail}
-              alt={book.volumeInfo.title}
+              src={book.imageUrl || "/placeholder-book.jpg"}
+              alt={book.title || "Không có tên"}
+              onError={e => { e.target.src = "/placeholder-book.jpg"; }}
             />
           </div>
           <div className="book-info">
-            <h2 className="book-title">{book.volumeInfo.title}</h2>
+            <h2 className="book-title">{book.title || "Không có tên"}</h2>
             <p className="author">
-              <strong>Tác giả:</strong> {book.volumeInfo.authors?.join(", ")}
+              <strong>Tác giả:</strong> {bookDetails?.authors || "Không rõ"}
             </p>
             <p className="price">
               <span className="price-value">
-                {book.saleInfo?.listPrice?.amount
-                  ? formatPrice(book.saleInfo.listPrice.amount)
-                  : formatPrice(999999)}
+                {formatPrice(book.price || 0)}
                 <span className="currency">₫</span>
               </span>
             </p>
@@ -138,7 +148,7 @@ const BookDetail = () => {
                   >
                     +
                   </button>
-                  <span className="stock">Còn lại {stock} trong kho</span>
+                  <span className="stock">Còn lại {book.quantity || 0} trong kho</span>
                 </div>
               </div>
               <div className="purchase-buttons">
@@ -157,22 +167,15 @@ const BookDetail = () => {
         </div>
         <div className="book-desc-section">
           <h3 className="desc-heading">Giới thiệu sách</h3>
-          <div
-  className="description"
-  dangerouslySetInnerHTML={{
-    __html: book.volumeInfo.description
-      ?.replace(/Ê|_Ê/g, "")
-      .replace(/<p><br><\/p>/g, ""),
-  }}
-></div>
-
+          <div className="description">
+            {book.description || "Không có mô tả"}
+          </div>
         </div>
-        
         <RecommendedBooks
-  books={recommended}
-  recIndex={recIndex}
-  setRecIndex={setRecIndex}
-/>
+          books={recommended}
+          recIndex={recIndex}
+          setRecIndex={setRecIndex}
+        />
       </div>
     </>
   );

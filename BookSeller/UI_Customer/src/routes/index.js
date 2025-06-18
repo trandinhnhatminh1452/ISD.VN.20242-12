@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { CartProvider } from './context/CartContext'; // import CartProvider
+import InvoiceDetail from '../pages/InvoiceDetail/InvoiceDetail';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

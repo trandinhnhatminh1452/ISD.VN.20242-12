@@ -34,34 +34,21 @@ const RecommendedBooks = ({ books, recIndex, setRecIndex, title = "Có thể b�
           >
             {books.map((b) => (
               <Link
-                to={`/book/${b.id}`}
-                key={b.id}
+                to={`/book/${b.productId || b.id}`}
+                key={b.productId || b.id}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 <div className="recommend-item">
                   <img
-                    src={
-                      b.volumeInfo.imageLinks?.thumbnail ||
-                      "https://via.placeholder.com/120x180?text=No+Image"
-                    }
-                    alt={b.volumeInfo.title}
+                    src={b.imageUrl || "/placeholder-book.jpg"}
+                    alt={b.title || "Không có tên"}
+                    onError={e => { e.target.src = "/placeholder-book.jpg"; }}
                   />
-                  <div className="recommend-title">{b.volumeInfo.title}</div>
+                  <div className="recommend-title">{b.title || "Không có tên"}</div>
                   <div className="recommend-prices">
                     <span className="recommend-price">
-                      {b.saleInfo?.listPrice?.amount
-                        ? formatPrice(b.saleInfo.listPrice.amount)
-                        : formatPrice(999999)}
-                      ₫
+                      {formatPrice(b.price || 0)}₫
                     </span>
-                    {b.saleInfo?.listPrice?.amount &&
-                      b.saleInfo?.retailPrice?.amount &&
-                      b.saleInfo.retailPrice.amount >
-                        b.saleInfo.listPrice.amount && (
-                        <span className="recommend-old-price">
-                          {formatPrice(b.saleInfo.retailPrice.amount)}₫
-                        </span>
-                      )}
                   </div>
                 </div>
               </Link>

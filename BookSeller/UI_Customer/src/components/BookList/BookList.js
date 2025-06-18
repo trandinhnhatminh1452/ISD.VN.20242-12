@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext, useRef, useMemo } from "react";
 import BookCard from "../BookCard/BookCard";
 import { SearchContext } from "../../context/SearchContext";
+import { productAPI } from "../../utils/api";
 import "./BookList.scss";
 
 const BookList = () => {
@@ -8,9 +9,11 @@ const BookList = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [maxResults, setMaxResults] = useState(32);
   const { searchTerm } = useContext(SearchContext);
-  const [query, setQuery] = useState(searchTerm || "react");
+  const [query, setQuery] = useState(searchTerm || "");
   const [sortPrice, setSortPrice] = useState("");
   const [totalItems, setTotalItems] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const gridRef = useRef(null);
 
   const [filters, setFilters] = useState({
@@ -49,24 +52,44 @@ const BookList = () => {
   });
 
   useEffect(() => {
-    setQuery(searchTerm.trim() === "" ? "react" : searchTerm);
+    setQuery(searchTerm.trim() === "" ? "" : searchTerm);
   }, [searchTerm]);
 
   useEffect(() => {
     const fetchBooks = async () => {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=${maxResults}&startIndex=${startIndex}`
-      );
-      const data = await response.json();
-      setBooks(data.items || []);
-      setTotalItems(data.totalItems || 0);
+      setLoading(true);
+      setError(null);
+      try {
+        const page = Math.floor(startIndex / maxResults);
+        const response = await productAPI.getAllProducts(page, maxResults, query);
+        console.log("Books from API:", response.content);
+        const fixedBooks = (response.content || []).map((book, idx) => {
+          if (book.productId === undefined && book.id !== undefined) {
+            return { ...book, productId: book.id };
+          }
+          if (book.productId === undefined) {
+            return { ...book, productId: idx + 1 };
+          }
+          return book;
+        });
+        setBooks(fixedBooks);
+        setTotalItems(response.totalElements || 0);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+        setError("Failed to load books. Please try again.");
+        setBooks([]);
+        setTotalItems(0);
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchBooks();
   }, [query, startIndex, maxResults]);
 
   const getBookPrice = (book) =>
-    typeof book.saleInfo?.listPrice?.amount === "number"
-      ? book.saleInfo.listPrice.amount
+    typeof book.price === "number"
+      ? book.price
       : 999999;
 
   const sortedBooks = useMemo(() => {
@@ -77,8 +100,8 @@ const BookList = () => {
       sorted.sort((a, b) => getBookPrice(b) - getBookPrice(a));
     } else {
       sorted.sort((a, b) => {
-        const titleA = a.volumeInfo.title.toLowerCase();
-        const titleB = b.volumeInfo.title.toLowerCase();
+        const titleA = (a.title || "").toLowerCase();
+        const titleB = (b.title || "").toLowerCase();
         if (titleA < titleB) return -1;
         if (titleA > titleB) return 1;
         return 0;
@@ -252,9 +275,11 @@ const BookList = () => {
               <option value="desc">Giá giảm dần</option>
             </select>
           </div>
-          <div className="grid" ref={gridRef}>
+          <div className="book-grid" ref={gridRef}>
             {filteredBooks.length > 0 ? (
-              filteredBooks.map((book) => <BookCard key={book.id} book={book} />)
+              filteredBooks.map((book, idx) => (
+                <BookCard key={book.productId || book.id || idx} book={book} index={idx} />
+              ))
             ) : (
               <p>Không có sách phù hợp với tìm kiếm của bạn.</p>
             )}
