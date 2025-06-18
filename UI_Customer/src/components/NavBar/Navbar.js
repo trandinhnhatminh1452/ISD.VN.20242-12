@@ -219,7 +219,9 @@ const Navbar = () => {
           }}
         >
           <FaShoppingCart size={26} />
-          <span className="cart-badge">{cartItemCount}</span>
+          {user && cartItemCount > 0 && (
+            <span className="cart-badge">{cartItemCount}</span>
+          )}
         </Link>
       </div>
     </nav>

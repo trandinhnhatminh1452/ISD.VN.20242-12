@@ -225,6 +225,7 @@ const ProductDetail = () => {
               category={book.category}
               recIndex={recIndex}
               setRecIndex={setRecIndex}
+              showSliderArrows={false}
             />
           )}
         </div>
