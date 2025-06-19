@@ -85,7 +85,8 @@ const BookDetail = () => {
 
   const handleBuyNow = () => {
     const item = {
-      id: book.id,
+      id: book.productId || book.id,
+      productId: book.productId || book.id,
       name: book.title || "Không có tên",
       price: book.price || 0,
       quantity: quantity,
