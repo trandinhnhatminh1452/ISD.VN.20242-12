@@ -32,27 +32,30 @@ const RecommendedBooks = ({ books, recIndex, setRecIndex, title = "Có thể b�
               transition: "transform 0.5s cubic-bezier(0.77, 0, 0.175, 1)",
             }}
           >
-            {books.map((b) => (
-              <Link
-                to={`/book/${b.productId || b.id}`}
-                key={b.productId || b.id}
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <div className="recommend-item">
-                  <img
-                    src={b.imageUrl || "/placeholder-book.jpg"}
-                    alt={b.title || "Không có tên"}
-                    onError={e => { e.target.src = "/placeholder-book.jpg"; }}
-                  />
-                  <div className="recommend-title">{b.title || "Không có tên"}</div>
-                  <div className="recommend-prices">
-                    <span className="recommend-price">
-                      {formatPrice(b.price || 0)}₫
-                    </span>
+            {books.map((b) => {
+              const fixedBook = { ...b, productId: b.productId || b.id };
+              return (
+                <Link
+                  to={`/book/${fixedBook.productId}`}
+                  key={fixedBook.productId}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <div className="recommend-item">
+                    <img
+                      src={fixedBook.imageUrl || "/placeholder-book.jpg"}
+                      alt={fixedBook.title || "Không có tên"}
+                      onError={e => { e.target.src = "/placeholder-book.jpg"; }}
+                    />
+                    <div className="recommend-title">{fixedBook.title || "Không có tên"}</div>
+                    <div className="recommend-prices">
+                      <span className="recommend-price">
+                        {formatPrice(fixedBook.price || 0)}₫
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
         <button

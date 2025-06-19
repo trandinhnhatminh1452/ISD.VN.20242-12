@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Form, Input, Button, Radio, message } from 'antd';
 import './Payment.css';
-import { invoiceAPI } from '../../utils/api';
+import { orderAPI } from '../../utils/api';
 
 const Payment = () => {
   const [form] = Form.useForm();
@@ -26,27 +26,22 @@ const Payment = () => {
       console.log("Cart items:", cartItems);
       
       // Chuẩn bị dữ liệu gửi lên backend
-      const invoiceData = {
-        customerName: values.customer_name,
-        customerEmail: values.customer_email,
-        customerPhone: values.customer_phone,
-        customerAddress: values.customer_address,
+      const orderData = {
+        name: values.customer_name,
+        email: values.customer_email,
+        phone: values.customer_phone,
+        address: values.customer_address,
         provinceCity: values.province_city,
-        subtotal: subtotal,
+        totalPrice: subtotal,
         deliveryFee: deliveryFee,
         vatFee: vatFee,
-        totalAmount: totalAmount,
-        paymentMethod: paymentMethod,
-        notes: values.notes,
-        items: cartItems.map(item => {
-          // Đảm bảo productId luôn có giá trị
+        finalAmount: totalAmount,
+        status: 'CREATED',
+        orderItems: cartItems.map(item => {
           const productId = item.productId || item.id;
-          console.log("Mapping item:", item, "productId:", productId);
-          
           if (!productId) {
             throw new Error(`ProductId is missing for item: ${JSON.stringify(item)}`);
           }
-          
           return {
             productId: productId,
             quantity: item.quantity,
@@ -55,10 +50,10 @@ const Payment = () => {
         })
       };
       
-      console.log("Invoice data being sent:", invoiceData);
-      const invoice = await invoiceAPI.createInvoice(invoiceData);
+      console.log("Order data being sent:", orderData);
+      const response = await orderAPI.createOrder(orderData);
       message.success('Đặt hàng thành công!');
-      navigate(`/invoice/${invoice.orderId}`);
+      navigate(`/invoice/${response.orderId}`);
     } catch (error) {
       console.error("Payment error:", error);
       message.error('Thanh toán thất bại. Vui lòng thử lại.');

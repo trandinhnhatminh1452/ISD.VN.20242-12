@@ -62,15 +62,13 @@ const BookList = () => {
       try {
         const page = Math.floor(startIndex / maxResults);
         const response = await productAPI.getAllProducts(page, maxResults, query);
-        console.log("Books from API:", response.content);
+        console.log("Books from API (raw):", response.content);
         const fixedBooks = (response.content || []).map((book, idx) => {
-          if (book.productId === undefined && book.id !== undefined) {
-            return { ...book, productId: book.id };
-          }
-          if (book.productId === undefined) {
-            return { ...book, productId: idx + 1 };
-          }
-          return book;
+          console.log("Book raw:", book);
+          return {
+            ...book,
+            productId: book.productId || book.id || book.product_id || idx + 1
+          };
         });
         setBooks(fixedBooks);
         setTotalItems(response.totalElements || 0);

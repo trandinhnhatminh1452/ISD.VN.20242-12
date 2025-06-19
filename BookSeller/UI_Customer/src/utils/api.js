@@ -16,7 +16,14 @@ export const productAPI = {
     if (!response.ok) {
       throw new Error('Failed to fetch products');
     }
-    return response.json();
+    const data = await response.json();
+    if (data && data.content) {
+      data.content = data.content.map((book, idx) => ({
+        ...book,
+        productId: book.productId || book.id || idx + 1
+      }));
+    }
+    return data;
   },
 
   // Get product by ID
@@ -25,7 +32,8 @@ export const productAPI = {
     if (!response.ok) {
       throw new Error('Product not found');
     }
-    return response.json();
+    const book = await response.json();
+    return { ...book, productId: book.productId || book.id || id };
   },
 
   // Get product details
@@ -34,7 +42,8 @@ export const productAPI = {
     if (!response.ok) {
       throw new Error('Product details not found');
     }
-    return response.json();
+    const book = await response.json();
+    return { ...book, productId: book.productId || book.id || id };
   },
 
   // Search products
@@ -43,7 +52,11 @@ export const productAPI = {
     if (!response.ok) {
       throw new Error('Search failed');
     }
-    return response.json();
+    const books = await response.json();
+    return books.map((book, idx) => ({
+      ...book,
+      productId: book.productId || book.id || idx + 1
+    }));
   },
 
   // Get products by category
@@ -52,7 +65,11 @@ export const productAPI = {
     if (!response.ok) {
       throw new Error('Failed to fetch products by category');
     }
-    return response.json();
+    const books = await response.json();
+    return books.map((book, idx) => ({
+      ...book,
+      productId: book.productId || book.id || idx + 1
+    }));
   },
 
   // Get related products
@@ -61,7 +78,11 @@ export const productAPI = {
     if (!response.ok) {
       throw new Error('Failed to fetch related products');
     }
-    return response.json();
+    const books = await response.json();
+    return books.map((book, idx) => ({
+      ...book,
+      productId: book.productId || book.id || idx + 1
+    }));
   }
 };
 
@@ -203,17 +224,8 @@ export const orderAPI = {
 };
 
 export const invoiceAPI = {
-  createInvoice: async (data) => {
-    const response = await fetch('http://localhost:8080/api/invoice/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) throw new Error('Tạo hóa đơn thất bại');
-    return response.json();
-  },
   getInvoiceById: async (id) => {
-    const response = await fetch(`http://localhost:8080/api/invoice/${id}`);
+    const response = await fetch(`http://localhost:8080/api/product/invoice/${id}`);
     if (!response.ok) throw new Error('Không tìm thấy hóa đơn');
     return response.json();
   }

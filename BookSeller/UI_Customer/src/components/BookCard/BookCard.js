@@ -27,7 +27,6 @@ const BookCard = ({ book, index }) => {
       id: productId,
       productId: productId
     };
-    console.log("Adding to cart:", cartBook);
     addToCart(cartBook);
   };
 

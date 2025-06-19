@@ -79,7 +79,7 @@ const BookDetail = () => {
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
-      addToCart({ ...book, id: book.productId || book.id });
+      addToCart({ ...book, id: book.productId || book.id, productId: book.productId || book.id });
     }
   };
 

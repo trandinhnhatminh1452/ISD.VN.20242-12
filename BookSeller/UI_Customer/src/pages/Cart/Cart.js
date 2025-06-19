@@ -44,7 +44,8 @@ const Cart = () => {
           [bookId]: newQty,
         }));
   
-        return { ...book, quantity: newQty };
+        const fixedBook = { ...book, quantity: newQty, productId: book.productId || book.id };
+        return fixedBook;
       }
       return book;
     });
@@ -104,6 +105,7 @@ const Cart = () => {
                   {cart.map((book) => {
                     const price = book.price || 0;
                     const qty = book.quantity || 1;
+                    const fixedBook = { ...book, productId: book.productId || book.id };
                     return (
                       <tr key={book.productId || book.id} className="cart-row">
                         <td className="cart-product-info">
