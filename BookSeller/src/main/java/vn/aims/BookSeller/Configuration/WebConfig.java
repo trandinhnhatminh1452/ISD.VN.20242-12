@@ -13,9 +13,9 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:3000") // cho phép React truy cập
-                        .allowedMethods("*") // cho phép mọi phương thức (GET, POST, PUT...)
-                        .allowCredentials(true); // cho phép gửi cookie nếu cần
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedMethods("*")
+                        .allowCredentials(true); 
             }
         };
     }
