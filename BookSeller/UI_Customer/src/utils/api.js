@@ -225,7 +225,7 @@ export const orderAPI = {
 
 export const invoiceAPI = {
   getInvoiceById: async (id) => {
-    const response = await fetch(`http://localhost:8080/api/product/invoice/${id}`);
+    const response = await fetch(`http://localhost:8080/api/order/invoice/${id}`);
     if (!response.ok) throw new Error('Không tìm thấy hóa đơn');
     return response.json();
   }

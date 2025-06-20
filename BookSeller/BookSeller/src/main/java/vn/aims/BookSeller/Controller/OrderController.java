@@ -17,6 +17,15 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<?> createOrder(@RequestBody Map<String, Object> orderData) {
         Integer orderId = orderService.createOrder(orderData);
-        return ResponseEntity.ok(Map.of("orderId", orderId));
+        String paymentMethod = (String) orderData.get("paymentMethod");
+        return ResponseEntity.ok(Map.of("orderId", orderId, "paymentMethod", paymentMethod));
+    }
+
+    @GetMapping("/invoice/{orderId}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<?> getInvoiceByOrderId(@PathVariable Integer orderId) {
+        Map<String, Object> invoice = orderService.getInvoiceFromOrder(orderId);
+        if (invoice == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(invoice);
     }
 } 

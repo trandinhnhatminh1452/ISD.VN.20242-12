@@ -85,21 +85,4 @@ public class ProductController {
         List<Product> products = bookService.getRelatedProducts(id);
         return ResponseEntity.ok(products);
     }
-
-    @GetMapping("/invoice/{orderId}")
-    public ResponseEntity<?> getInvoiceByOrderId(@PathVariable Integer orderId) {
-        Map<String, Object> invoice = orderService.getInvoiceFromOrder(orderId);
-        if (invoice == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(invoice);
-    }
-
-    @PostMapping("/order/create")
-    public ResponseEntity<?> createOrder(@RequestBody Map<String, Object> orderData) {
-        // Gọi service để tạo order từ orderData
-        // (Giả sử orderService đã có hàm createOrder nhận Map hoặc bạn sẽ bổ sung sau)
-        // Ở đây trả về fake orderId để FE test CORS
-        Map<String, Object> result = new HashMap<>();
-        result.put("orderId", 123); // TODO: thay bằng orderId thực tế sau
-        return ResponseEntity.ok(result);
-    }
 }

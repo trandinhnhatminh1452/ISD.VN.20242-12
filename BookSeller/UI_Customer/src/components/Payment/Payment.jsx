@@ -47,13 +47,14 @@ const Payment = () => {
             quantity: item.quantity,
             price: item.price
           };
-        })
+        }),
+        paymentMethod: paymentMethod
       };
       
       console.log("Order data being sent:", orderData);
       const response = await orderAPI.createOrder(orderData);
       message.success('Đặt hàng thành công!');
-      navigate(`/invoice/${response.orderId}`);
+      navigate(`/invoice/${response.orderId}`, { state: { paymentMethod: paymentMethod } });
     } catch (error) {
       console.error("Payment error:", error);
       message.error('Thanh toán thất bại. Vui lòng thử lại.');

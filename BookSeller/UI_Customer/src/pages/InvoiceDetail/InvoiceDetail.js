@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { invoiceAPI } from '../../utils/api';
 import './InvoiceDetail.scss';
 
 const InvoiceDetail = () => {
   const { id } = useParams();
+  const location = useLocation();
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Lấy paymentMethod từ state nếu có (khi vừa đặt hàng xong)
+  const paymentMethodFromState = location.state?.paymentMethod;
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -62,7 +66,17 @@ const InvoiceDetail = () => {
           <div><b>Email:</b> {invoice.customerEmail}</div>
           <div><b>SĐT:</b> {invoice.customerPhone}</div>
           <div><b>Địa chỉ:</b> {invoice.customerAddress}, {invoice.provinceCity}</div>
-          <div><b>Phương thức thanh toán:</b> {invoice.paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản'}</div>
+          <div><b>Phương thức thanh toán:</b> {
+            paymentMethodFromState === 'cod'
+              ? 'Thanh toán khi nhận hàng'
+              : paymentMethodFromState === 'vnpay'
+                ? 'Thanh toán qua VNPay'
+                : (invoice.paymentMethod === 'cod'
+                    ? 'Thanh toán khi nhận hàng'
+                    : invoice.paymentMethod === 'vnpay'
+                      ? 'Thanh toán qua VNPay'
+                      : 'Chuyển khoản')
+          }</div>
           <div><b>Trạng thái:</b> {invoice.status === 'ISSUED' ? 'Đã phát hành' : invoice.status}</div>
         </div>
 
