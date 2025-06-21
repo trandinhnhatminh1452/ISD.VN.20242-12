@@ -1,78 +1,47 @@
 package vn.aims.BookSeller.Entity;
 
-
 import jakarta.persistence.*;
-import lombok.Data;
-
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Entity
-@Data
-@Table(name = "\"user\"")
+@Table(name = "user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Dùng IDENTITY cho PostgreSQL
-    @Column(name = "user_id", nullable = false)
-    private Integer id;
-    @Column(name = "username")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long userId;
+
+    @Column(name = "username", nullable = false)
     private String username;
-    @Column(name = "password")
+
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-     @JoinTable(
-             name = "users_roles",
-             joinColumns=@JoinColumn(name = "user_id"),
-             inverseJoinColumns=@JoinColumn(name = "role_id")
-     )
-
-    Collection<Role> roles;
-
-    // Quan hệ 1-1 với Cart (1 user có 1 cart)
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
-    private Cart cart;
-
-    // Quan hệ 1-n với Order (1 user có nhiều đơn hàng)
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Order> orders = new ArrayList<>();
-
+    @Column(name = "email", nullable = false)
     private String email;
+
+    @Column(name = "phone")
     private String phone;
+
+    @Column(name = "status")
     private Boolean status;
-    private Timestamp created_at;
 
-    public Integer getId() {
-        return id;
-    }
+    @Column(name = "created_at")
+    private Timestamp createdAt;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Collection<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Collection<Role> roles) {
-        this.roles = roles;
-    }
+    // Getters and Setters
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public Boolean getStatus() { return status; }
+    public void setStatus(Boolean status) { this.status = status; }
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 }

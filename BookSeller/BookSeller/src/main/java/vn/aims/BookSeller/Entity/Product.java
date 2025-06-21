@@ -1,142 +1,93 @@
 package vn.aims.BookSeller.Entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
-import java.time.*;
+import java.time.LocalDate;
 
 @Entity
-@Data
 @Table(name = "product")
 public class Product {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
-    private Integer productId;
+    private Long productId;
 
-    @Column(name = "title")
+    @NotBlank(message = "Title is mandatory")
+    @Column(name = "title", length = 255, nullable = false)
     private String title;
 
-    @Column(name = "category")
+    @NotBlank(message = "Category is mandatory")
+    @Column(name = "category", length = 50, nullable = false)
     private String category;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "barcode")
+    @NotBlank(message = "Barcode is mandatory")
+    @Column(name = "barcode", length = 100, nullable = false)
     private String barcode;
 
-    @Column(name = "value")
+    @NotNull(message = "Value is mandatory")
+    @Column(name = "value", precision = 12, scale = 2, nullable = false)
     private BigDecimal value;
 
-    @Column(name = "price")
+    @NotNull(message = "Price is mandatory")
+    @Min(value = 0, message = "Price must be greater than or equal to 0")
+    @Column(name = "price", precision = 12, scale = 2, nullable = false)
     private BigDecimal price;
 
-    @Column(name = "quantity")
+    @NotNull(message = "Quantity is mandatory")
+    @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
     @Column(name = "entry_date")
     private LocalDate entryDate;
 
-    @Column(name = "dimension")
+    @Column(name = "dimension", length = 100)
     private String dimension;
 
     @Column(name = "weight")
-    private Float weight;
+    private Double weight;
 
     @Column(name = "created_by")
     private Integer createdBy;
 
-    // Getters and Setters ...
+    // Constructors
+    public Product() {}
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
+    public Product(String title, String category, String description, String barcode, BigDecimal value, BigDecimal price, Integer quantity) {
         this.title = title;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
         this.category = category;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(String barcode) {
         this.barcode = barcode;
-    }
-
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    public void setValue(BigDecimal value) {
         this.value = value;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
-    public LocalDate getEntryDate() {
-        return entryDate;
-    }
-
-    public void setEntryDate(LocalDate entryDate) {
-        this.entryDate = entryDate;
-    }
-
-    public String getDimension() {
-        return dimension;
-    }
-
-    public void setDimension(String dimension) {
-        this.dimension = dimension;
-    }
-
-    public Float getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Float weight) {
-        this.weight = weight;
-    }
-
-    public Integer getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Integer createdBy) {
-        this.createdBy = createdBy;
-    }
+    // Getters and Setters
+    public Long getProductId() { return productId; }
+    public void setProductId(Long productId) { this.productId = productId; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getBarcode() { return barcode; }
+    public void setBarcode(String barcode) { this.barcode = barcode; }
+    public BigDecimal getValue() { return value; }
+    public void setValue(BigDecimal value) { this.value = value; }
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public LocalDate getEntryDate() { return entryDate; }
+    public void setEntryDate(LocalDate entryDate) { this.entryDate = entryDate; }
+    public String getDimension() { return dimension; }
+    public void setDimension(String dimension) { this.dimension = dimension; }
+    public Double getWeight() { return weight; }
+    public void setWeight(Double weight) { this.weight = weight; }
+    public Integer getCreatedBy() { return createdBy; }
+    public void setCreatedBy(Integer createdBy) { this.createdBy = createdBy; }
 }
-
