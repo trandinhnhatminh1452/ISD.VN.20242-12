@@ -49,16 +49,14 @@ const ProductCard = ({ book }) => {
 
   return (
     <div className="book-card">
-      <Link
-        to={`/product/${book.productId}`}
-        onClick={() =>
-          console.log("➡️ Chuyển đến:", `/product/${book.productId}`)
-        }
-      >
+      <Link to={`/product/${book.productId}`}>
         <img src={image} alt={title} />
       </Link>
       <div className="book-details">
-        <h3>{title}</h3>
+        <Link to={`/product/${book.productId}`}>
+          <h3>{title}</h3>
+        </Link>
+
         <div className="price-cart">
           <p className="price">{formatPrice(price)} VND</p>
           <button className="add-to-cart" onClick={handleAddToCart}>
