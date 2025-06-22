@@ -13,6 +13,7 @@ public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
     public List<Order> findAllOrders() {
         return orderRepository.findAll();
     }
@@ -21,8 +22,8 @@ public class OrderService {
     public Order approveOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        if (order.getStatus() == 0) { // Chờ duyệt
-            order.setStatus(1); // Đã duyệt
+        if ("0".equals(order.getStatus())) { // Chờ duyệt
+            order.setStatus("1"); // Đã duyệt
             return orderRepository.save(order);
         }
         throw new RuntimeException("Order cannot be approved because it is not in pending state");
@@ -32,8 +33,8 @@ public class OrderService {
     public Order cancelOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        if (order.getStatus() == 0) {
-            order.setStatus(2);
+        if ("0".equals(order.getStatus())) {
+            order.setStatus("2"); // Đã từ chối
             return orderRepository.save(order);
         }
         throw new RuntimeException("Order cannot be canceled because it is not in pending state");
@@ -44,3 +45,4 @@ public class OrderService {
         return orderRepository.findById(orderId).orElse(null);
     }
 }
+

@@ -1,5 +1,6 @@
 package vn.aims.BookSeller.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
@@ -46,13 +47,15 @@ public class Order {
     private Double finalAmount;
 
     @Column(name = "status")
-    private Integer status; // 0: Chờ duyệt, 1: Đã duyệt, 2: Từ chối
+    private String status; // 0: Chờ duyệt, 1: Đã duyệt, 2: Từ chối
 
     @Column(name = "created_at")
     private Timestamp createdAt;
 
     @OneToMany(mappedBy = "order")
+    @JsonManagedReference
     private List<OrderItem> orderItems;
+
 
     // Getters and Setters
     public Long getOrderId() { return orderId; }
@@ -79,8 +82,8 @@ public class Order {
     public void setTotalPrice(Double totalPrice) { this.totalPrice = totalPrice; }
     public Double getFinalAmount() { return finalAmount; }
     public void setFinalAmount(Double finalAmount) { this.finalAmount = finalAmount; }
-    public Integer getStatus() { return status; }
-    public void setStatus(Integer status) { this.status = status; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
     public List<OrderItem> getOrderItems() { return orderItems; }

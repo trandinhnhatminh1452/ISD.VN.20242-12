@@ -7,17 +7,24 @@ const OrderApprovalList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case '0': return 'Chờ duyệt';
+      case '1': return 'Đã duyệt';
+      case '2': return 'Từ chối';
+      default: return 'Không xác định';
+    }
+  };
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/orders', {
-          headers: { 'Accept': 'application/json' }
+          headers: { "Content-Type": "application/json", }
         });
         console.log('Phản hồi API:', response.data);
         if (Array.isArray(response.data)) {
-          const pendingOrders = response.data.filter(order =>
-            order.status === 'Chờ duyệt' || order.status === 'Cho duyet'
-          );
+          const pendingOrders = response.data.filter(order => order.status === '0');
           console.log('Đơn hàng chờ duyệt:', pendingOrders);
           setOrders(pendingOrders);
         } else {
@@ -38,8 +45,8 @@ const OrderApprovalList = () => {
     try {
       await axios.put(`http://localhost:8080/api/orders/${id}/approve`);
       setOrders(orders.map(order =>
-        order.id === id ? { ...order, status: 'Đã duyệt' } : order
-      ).filter(order => order.status === 'Chờ duyệt'));
+        order.id === id ? { ...order, status: '1' } : order
+      ).filter(order => order.status === '0'));
     } catch (err) {
       setError('Không thể duyệt đơn hàng');
       console.error(err);
@@ -50,8 +57,8 @@ const OrderApprovalList = () => {
     try {
       await axios.put(`http://localhost:8080/api/orders/${id}/cancel`);
       setOrders(orders.map(order =>
-        order.id === id ? { ...order, status: 'Từ chối' } : order
-      ).filter(order => order.status === 'Chờ duyệt'));
+        order.id === id ? { ...order, status: '2' } : order
+      ).filter(order => order.status === '0'));
     } catch (err) {
       setError('Không thể hủy đơn hàng');
       console.error(err);
@@ -88,7 +95,7 @@ const OrderApprovalList = () => {
                 <td className="py-3">{order.email}</td>
                 <td className="py-3">{order.total_price ? `${order.total_price}đ` : 'N/A'}</td>
                 <td className="py-3">{order.created_at || 'N/A'}</td>
-                <td className="py-3 text-yellow-600">{order.status || 'Chờ duyệt'}</td>
+                <td className="py-3 text-yellow-600">{getStatusLabel(order.status)}</td>
                 <td className="py-3 space-x-2">
                   <button
                     onClick={() => handleApprove(order.id)}
