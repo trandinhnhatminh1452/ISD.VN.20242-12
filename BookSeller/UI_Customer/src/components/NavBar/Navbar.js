@@ -8,6 +8,7 @@ import "../../context/SearchContext.scss";
 import "./NavBar.scss"; // Thêm file CSS cho Navbar
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
+import { productAPI } from "../../utils/api";
 
 const Navbar = () => {
   const { cart } = useCart(); // Lấy số lượng sách trong giỏ hàng từ CartContext
@@ -46,24 +47,36 @@ const Navbar = () => {
     }
   };
 
+  const handleSearch = async (value) => {
+    try {
+      // Use real API for search suggestions
+      const products = await productAPI.searchProducts(value);
+      const suggestions = products.slice(0, 5).map(product => product.title);
+      setSuggestions(products.slice(0, 5));
+      setShowSuggestions(true);
+    } catch (error) {
+      console.error("Error fetching search suggestions:", error);
+      setSuggestions([]);
+    }
+  };
+
   const onInputChange = async (e) => {
     const value = e.target.value;
     setInputValue(value);
-    if (value.trim() === '') {
-      setShowSuggestions(false);
-      setSuggestions([]);
-      return;
-    }
+    setShowSuggestions(false);
 
-    try {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(value)}&maxResults=5`
-      );
-      const data = await response.json();
-      setSuggestions(data.items || []);
-      setShowSuggestions(true);
-    } catch (error) {
-      console.error('Error fetching suggestions:', error);
+    if (value.trim().length > 0) {
+      try {
+        // Use real API for search suggestions
+        const products = await productAPI.searchProducts(value);
+        const suggestions = products.slice(0, 5).map(product => product.title);
+        setSuggestions(products.slice(0, 5));
+        setShowSuggestions(true);
+      } catch (error) {
+        console.error('Error fetching suggestions:', error);
+        setSuggestions([]);
+      }
+    } else {
       setSuggestions([]);
     }
   };
@@ -163,6 +176,7 @@ const Navbar = () => {
               {user ? (
                 <>
                   <Link to="/profile" className="menu-item">{user.username}</Link>
+                  <Link to="/transactions" className="menu-item">Giao dịch</Link>
                   <button onClick={logout} className="menu-item">Đăng xuất</button>
                 </>
               ) : (

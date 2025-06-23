@@ -32,40 +32,30 @@ const RecommendedBooks = ({ books, recIndex, setRecIndex, title = "Có thể b�
               transition: "transform 0.5s cubic-bezier(0.77, 0, 0.175, 1)",
             }}
           >
-            {books.map((b) => (
-              <Link
-                to={`/book/${b.id}`}
-                key={b.id}
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <div className="recommend-item">
-                  <img
-                    src={
-                      b.volumeInfo.imageLinks?.thumbnail ||
-                      "https://via.placeholder.com/120x180?text=No+Image"
-                    }
-                    alt={b.volumeInfo.title}
-                  />
-                  <div className="recommend-title">{b.volumeInfo.title}</div>
-                  <div className="recommend-prices">
-                    <span className="recommend-price">
-                      {b.saleInfo?.listPrice?.amount
-                        ? formatPrice(b.saleInfo.listPrice.amount)
-                        : formatPrice(999999)}
-                      ₫
-                    </span>
-                    {b.saleInfo?.listPrice?.amount &&
-                      b.saleInfo?.retailPrice?.amount &&
-                      b.saleInfo.retailPrice.amount >
-                        b.saleInfo.listPrice.amount && (
-                        <span className="recommend-old-price">
-                          {formatPrice(b.saleInfo.retailPrice.amount)}₫
-                        </span>
-                      )}
+            {books.map((b) => {
+              const fixedBook = { ...b, productId: b.productId || b.id };
+              return (
+                <Link
+                  to={`/book/${fixedBook.productId}`}
+                  key={fixedBook.productId}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <div className="recommend-item">
+                    <img
+                      src={fixedBook.imageUrl || "/placeholder-book.jpg"}
+                      alt={fixedBook.title || "Không có tên"}
+                      onError={e => { e.target.src = "/placeholder-book.jpg"; }}
+                    />
+                    <div className="recommend-title">{fixedBook.title || "Không có tên"}</div>
+                    <div className="recommend-prices">
+                      <span className="recommend-price">
+                        {formatPrice(fixedBook.price || 0)}₫
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
         <button

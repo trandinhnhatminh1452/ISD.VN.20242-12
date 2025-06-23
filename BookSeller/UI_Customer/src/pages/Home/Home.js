@@ -1,49 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { productAPI } from "../../utils/api";
 import "./Home.scss";
 import RecommendedBooks from "../../components/recommendedBook/recommendedBook";
 
 const Home = () => {
   const [members, setMembers] = useState([]);
-  const { bookId } = useParams(); // Lấy ID sách từ URL
-  const [book, setBook] = React.useState(null);
-  const [products, setProducts] = React.useState([]);
+  const { bookId } = useParams();
+  const [book, setBook] = useState(null);
+  const [products, setProducts] = useState([]);
   const [recIndex, setRecIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  React.useEffect(() => {
-    const fetchBookDetail = async () => {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes/${bookId}`
-      );
-      const data = await response.json();
-      setBook(data);
-    };
-
-    fetchBookDetail();
+  useEffect(() => {
+    // If bookId is provided, fetch that specific book
+    if (bookId) {
+      const fetchBookDetail = async () => {
+        setLoading(true);
+        try {
+          const productData = await productAPI.getProductById(bookId);
+          setBook(productData);
+        } catch (error) {
+          console.error("Error fetching book:", error);
+          setBook(null);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchBookDetail();
+    }
   }, [bookId]);
 
-  // Fetch recommended books based on author or subject
-  React.useEffect(() => {
-    if (!book) return;
-    let query = "sach";
-    if (book.volumeInfo?.authors && book.volumeInfo.authors.length > 0) {
-      query = book.volumeInfo.authors[0];
-    } else if (
-      book.volumeInfo?.categories &&
-      book.volumeInfo.categories.length > 0
-    ) {
-      query = book.volumeInfo.categories[0];
-    }
-    const fetchRecommended = async () => {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-          query
-        )}&maxResults=20`
-      );
-      const data = await response.json();
-      setProducts((data.items || []).filter((b) => b.id !== bookId));
-      setRecIndex(0); // reset slider when book changes
+  // Fetch featured products
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        // Get first page of products as featured products
+        const response = await productAPI.getAllProducts(0, 20);
+        setProducts(response.content || []);
+        setRecIndex(0);
+      } catch (error) {
+        console.error("Error fetching featured products:", error);
+        setProducts([]);
+      }
     };
+
+    fetchFeaturedProducts();
 
     setMembers([
       {
@@ -64,25 +66,21 @@ const Home = () => {
       {
         id: 4,
         name: "Đặng Thành Tựu",
-        image: "https://randomuser.me/api/portraits/women/4.jpg",
+        image: "/member/placeholder.jpg",
       },
       {
         id: 5,
         name: "Bùi Quang Tùng",
-        image: "https://randomuser.me/api/portraits/men/5.jpg",
+        image: "/member/placeholder.jpg",
       },
     ]);
-
-    fetchRecommended();
-  }, [book, bookId]);
-
+  }, []);
 
   // Slider navigation
 
-  if (!book) {
+  if (loading) {
     return <p className="loading">Đang tải thông tin sách...</p>;
   }
-
 
   return (
     <div className="home-page">
