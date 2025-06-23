@@ -25,5 +25,26 @@ public class OrderItem {
     private BigDecimal price;
 
     // Getters and Setters ...
+    public Product getProduct() {
+        return product;
+    }
+    public Integer getQuantity() {
+        return quantity;
+    }
+    public BigDecimal getPrice() {
+        return price;
+    }
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 }
 
