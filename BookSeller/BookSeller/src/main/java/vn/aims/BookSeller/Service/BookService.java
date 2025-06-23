@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.aims.BookSeller.Entity.Product;
+import vn.aims.BookSeller.Entity.ProductDetailBook;
 import vn.aims.BookSeller.Repository.BookRepo;
 
 import java.util.List;
@@ -44,4 +45,9 @@ public class BookService {
     public Product findById(Integer id) {
         return bookRepo.findById(id).orElse(null);
     }
+
+    public Page<Product> findByAuthors(String name, Pageable pageable){
+        return bookRepo.findByAuthors(name, pageable);
+    }
+
 }

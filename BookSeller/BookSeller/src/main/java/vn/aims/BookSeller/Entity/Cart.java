@@ -1,5 +1,6 @@
 package vn.aims.BookSeller.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +25,7 @@ public class Cart {
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)
+    @JsonBackReference
     private User user;
 
     // ====== Getter & Setter ======
