@@ -28,4 +28,10 @@ public class OrderController {
         if (invoice == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(invoice);
     }
+
+    @GetMapping("/transactions/{userId}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<?> getTransactionHistory(@PathVariable Integer userId) {
+        return ResponseEntity.ok(orderService.getTransactionHistory(userId));
+    }
 } 

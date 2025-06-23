@@ -176,6 +176,7 @@ const Navbar = () => {
               {user ? (
                 <>
                   <Link to="/profile" className="menu-item">{user.username}</Link>
+                  <Link to="/transactions" className="menu-item">Giao dịch</Link>
                   <button onClick={logout} className="menu-item">Đăng xuất</button>
                 </>
               ) : (

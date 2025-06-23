@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Form, Input, Button, Radio, message } from 'antd';
+import { useAuth } from '../../context/AuthContext';
 import './Payment.css';
 import { orderAPI } from '../../utils/api';
 
@@ -8,6 +9,7 @@ const Payment = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [shippingType, setShippingType] = useState('normal');
   const [loading, setLoading] = useState(false);
@@ -37,6 +39,7 @@ const Payment = () => {
         vatFee: vatFee,
         finalAmount: totalAmount,
         status: 'CREATED',
+        userId: user?.userId,
         orderItems: cartItems.map(item => {
           const productId = item.productId || item.id;
           if (!productId) {

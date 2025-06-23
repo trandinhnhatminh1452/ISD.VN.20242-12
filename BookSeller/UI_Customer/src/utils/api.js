@@ -220,6 +220,25 @@ export const orderAPI = {
     const response = await fetch(`${API_BASE_URL}/order/${id}`);
     if (!response.ok) throw new Error('Không tìm thấy đơn hàng');
     return response.json();
+  },
+
+  // Get transaction history for a user
+  getTransactionHistory: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/order/transactions/${userId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch transaction history');
+    }
+    return response.json();
+  },
+
+  // --- FOR TESTING ---
+  // Get all recent transactions for testing
+  getAllTransactionsForTesting: async () => {
+    const response = await fetch(`${API_BASE_URL}/order/transactions/all`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch all transactions for testing');
+    }
+    return response.json();
   }
 };
 
