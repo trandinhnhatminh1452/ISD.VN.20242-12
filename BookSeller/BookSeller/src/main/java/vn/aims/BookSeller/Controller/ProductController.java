@@ -31,10 +31,12 @@ public class ProductController {
         return this.bookService.findByAuthors(name);
     }
 
+
     @GetMapping("/all")
     public List<ProductDetailBook> findAll(){
         return this.bookService.findAll();
     }
+
 
     // Get all products with pagination
     @GetMapping("/list")
@@ -85,4 +87,5 @@ public class ProductController {
         List<Product> products = bookService.getRelatedProducts(id);
         return ResponseEntity.ok(products);
     }
+
 }
