@@ -72,8 +72,4 @@ public class UserController {
         ));
     }
 
-    @GetMapping("/encode-password")
-    public String encodePassword(@RequestParam String rawPassword) {
-        return passwordEncoder.encode(rawPassword);
-    }
 }
