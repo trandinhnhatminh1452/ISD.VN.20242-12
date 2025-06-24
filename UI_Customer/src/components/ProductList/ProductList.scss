@@ -1,0 +1,220 @@
+.search-input-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 20px;
+
+  .search-input {
+    padding: 10px 15px;
+    width: 300px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px 0 0 8px;
+    outline: none;
+
+    &:focus {
+      border-color: #0077ff;
+    }
+  }
+
+  .search-button {
+    padding: 10px 15px;
+    font-size: 20px;
+    border: none;
+    background-color: #0077ff;
+    color: white;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #005fcc;
+    }
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem 0;
+
+  button {
+    padding: 0.5rem 1rem;
+    background-color: #fff;
+    color: #555;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.95rem;
+    min-width: 38px;
+    min-height: 38px;
+    transition: all 0.2s;
+    margin: 0 2px;
+    box-shadow: none;
+
+    &.active {
+      border: 1.5px solid #27ae60;
+      color: #219150;
+      font-weight: 600;
+      background: #fff;
+      box-shadow: 0 0 0 2px #27ae6033;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: #f0f8f5;
+      border: 1.5px solid #27ae60;
+      color: #219150;
+      box-shadow: 0 0 0 2px #27ae6033;
+    }
+
+    &:disabled {
+      opacity: 1.5;
+      cursor: pointer;
+      box-shadow: none;
+    }
+  }
+
+  .pagination-ellipsis {
+    color: #888;
+    font-size: 1.3rem;
+    margin: 0 6px;
+    user-select: none;
+    pointer-events: none;
+  }
+}
+
+.booklist-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+
+  label {
+    color: #219150;
+    font-weight: 500;
+  }
+
+  .sort-select {
+    padding: 8px 18px 8px 12px;
+    border-radius: 22px;
+    width: 164px;
+    border: 1.5px solid #27ae60;
+    font-size: 1rem;
+    background: #f8f8f8;
+    color: #222;
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.08);
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23219150" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 18px 18px;
+    margin-right: 33px;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      border-color: #219150;
+      box-shadow: 0 2px 12px rgba(39, 174, 96, 0.18);
+    }
+  }
+}
+
+img[alt="Sách mở ra"] {
+  width: calc(100% + 48px);
+  max-width: none;
+  display: block;
+  height: 444px;
+  object-fit: cover;
+  margin: 0 0 24px 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  position: relative;
+  left: -24px;
+}
+
+.book-card {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.book-card.visible {
+  opacity: 1;
+  transform: none;
+}
+
+// === FILTER SIDEBAR ===
+.booklist-container {
+  display: flex;
+  padding: 0 1.5rem;
+  gap: 1.5rem;
+
+  .booklist-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.filter-sidebar {
+  width: 240px;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #219150;
+    font-weight: 600;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    label {
+      font-size: 1rem;
+      color: #333;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      input[type="checkbox"] {
+        margin-right: 10px;
+        accent-color: #27ae60;
+        width: 18px;
+        height: 18px;
+      }
+
+      &:hover {
+        color: #219150;
+      }
+    }
+  }
+}
