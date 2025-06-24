@@ -3,48 +3,55 @@ import { useParams, Link } from "react-router-dom";
 import "./Home.scss";
 import RecommendedBooks from "../../components/recommendedBook/recommendedBook";
 
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  }).format(price);
+};
+
 const Home = () => {
   const [members, setMembers] = useState([]);
   const { bookId } = useParams(); // Lấy ID sách từ URL
-  const [book, setBook] = React.useState(null);
+  const [categories, setCategories] = useState([]);
   const [products, setProducts] = React.useState([]);
   const [recIndex, setRecIndex] = useState(0);
 
+  // Fetch featured products
   React.useEffect(() => {
-    const fetchBookDetail = async () => {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes/${bookId}`
-      );
-      const data = await response.json();
-      setBook(data);
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/product/all?page=0&size=12`
+        );
+        const data = await response.json();
+        setProducts(data.content || []);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
     };
 
-    fetchBookDetail();
-  }, [bookId]);
+    fetchFeaturedProducts();
+  }, []);
 
-  // Fetch recommended books based on author or subject
+  // Fetch categories
   React.useEffect(() => {
-    if (!book) return;
-    let query = "sach";
-    if (book.volumeInfo?.authors && book.volumeInfo.authors.length > 0) {
-      query = book.volumeInfo.authors[0];
-    } else if (
-      book.volumeInfo?.categories &&
-      book.volumeInfo.categories.length > 0
-    ) {
-      query = book.volumeInfo.categories[0];
-    }
-    const fetchRecommended = async () => {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-          query
-        )}&maxResults=20`
-      );
-      const data = await response.json();
-      setProducts((data.items || []).filter((b) => b.id !== bookId));
-      setRecIndex(0); // reset slider when book changes
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/product/categories`
+        );
+        const data = await response.json();
+        setCategories(data || []);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
     };
 
+    fetchCategories();
+  }, []);
+
+  React.useEffect(() => {
     setMembers([
       {
         id: 1,
@@ -72,17 +79,7 @@ const Home = () => {
         image: "https://randomuser.me/api/portraits/men/5.jpg",
       },
     ]);
-
-    fetchRecommended();
-  }, [book, bookId]);
-
-
-  // Slider navigation
-
-  if (!book) {
-    return <p className="loading">Đang tải thông tin sách...</p>;
-  }
-
+  }, []);
 
   return (
     <div className="home-page">
@@ -119,11 +116,11 @@ const Home = () => {
 
       {/* Suggested Books Section */}
       <RecommendedBooks
-  books={products}
-  recIndex={recIndex}
-  setRecIndex={setRecIndex}
-  title="Sản phẩm của chúng tôi"
-/>
+        books={products}
+        recIndex={recIndex}
+        setRecIndex={setRecIndex}
+        title="Sản phẩm của chúng tôi"
+      />
     </div>
   );
 };

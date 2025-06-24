@@ -1,10 +1,14 @@
 package vn.aims.BookSeller.Entity;
 
 
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,7 +22,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Dùng IDENTITY cho PostgreSQL
     @Column(name = "user_id", nullable = false)
-    private Integer id;
+    private Long id;
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -45,13 +49,18 @@ public class User {
     private String email;
     private String phone;
     private Boolean status;
-    private LocalDateTime created_at;
 
-    public Integer getId() {
+    @Column(name = "created_at", insertable = false, updatable = false)
+    @JsonProperty("created_at")
+private Timestamp created_at;
+
+
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -78,4 +87,37 @@ public class User {
     public void setRoles(Collection<Role> roles) {
         this.roles = roles;
     }
+
+    public String getPhone() {
+    return phone;
+}
+
+public void setPhone(String phone) {
+    this.phone = phone;
+}
+
+public Timestamp getCreated_at() {
+    return created_at;
+}
+
+public void setCreated_at(Timestamp created_at) {
+    this.created_at = created_at;
+}
+
+public String getEmail() {
+    return email;
+}
+
+public void setEmail(String email) {
+    this.email = email;
+}
+
+public Cart getCart() {
+    return cart;
+}
+
+public void setCart(Cart cart) {
+    this.cart = cart;
+}
+
 }

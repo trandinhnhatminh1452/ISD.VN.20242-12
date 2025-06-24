@@ -1,45 +1,67 @@
-// src/context/CartContext.jsx
-import React, { createContext, useContext, useState } from "react";
+// src/context/CartContext.js
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext"; // Lấy thông tin người dùng
 
-// Tạo context để quản lý giỏ hàng
 const CartContext = createContext();
 
-// Hook để sử dụng CartContext
-export const useCart = () => {
-  return useContext(CartContext);
-};
+export const useCart = () => useContext(CartContext);
 
-// CartProvider để cung cấp giỏ hàng cho các component con
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]); // Giỏ hàng (dùng useState để quản lý)
+  const { user } = useAuth(); // Lấy user hiện tại
+  const [cart, setCart] = useState([]);
 
-  // Thêm sản phẩm vào giỏ hàng
-  const addToCart = (book) => {
-    setCart((prevCart) => {
-      // Kiểm tra xem sách đã có trong giỏ hàng chưa
-      const existingBookIndex = prevCart.findIndex(
-        (item) => item.id === book.id
-      );
-
-      if (existingBookIndex !== -1) {
-        // Nếu sách đã tồn tại, tạo một bản sao mới của giỏ hàng
-        const newCart = [...prevCart];
-        // Tăng số lượng của sách đó lên 1
-        newCart[existingBookIndex] = {
-          ...newCart[existingBookIndex],
-          quantity: (newCart[existingBookIndex].quantity || 1) + 1,
-        };
-        return newCart;
+  // Load giỏ hàng từ localStorage khi user thay đổi
+  useEffect(() => {
+    if (user && user.id) {
+      const storedCart = localStorage.getItem(`cart_${user.id}`);
+      if (storedCart) {
+        setCart(JSON.parse(storedCart));
       } else {
-        // Nếu sách chưa tồn tại, thêm mới vào giỏ hàng với số lượng là 1
-        return [...prevCart, { ...book, quantity: 1 }];
+        setCart([]); // reset giỏ hàng nếu user chưa có
       }
-    });
+    }
+  }, [user]);
+
+  // Lưu giỏ hàng vào localStorage mỗi khi giỏ hàng thay đổi
+  useEffect(() => {
+    if (user && user.id) {
+      localStorage.setItem(`cart_${user.id}`, JSON.stringify(cart));
+    }
+  }, [cart, user]);
+
+  // Thêm sản phẩm
+  const addToCart = (product) => {
+    const normalizedProductId =
+      product.productId || product.id || product.idProduct;
+
+    if (!normalizedProductId) {
+      console.warn("❌ Không thể thêm sản phẩm không có productId hợp lệ:", product);
+    return;
+  }
+
+  const normalizedProduct = {
+    ...product,
+    productId: normalizedProductId, // Đảm bảo productId tồn tại
   };
 
-  // Xóa sản phẩm khỏi giỏ hàng
-  const removeFromCart = (bookId) => {
-    setCart((prevCart) => prevCart.filter((book) => book.id !== bookId)); // Lọc sách có id khác để xóa
+  setCart((prevCart) => {
+    const index = prevCart.findIndex(
+      (item) => item.productId === normalizedProduct.productId
+    );
+    if (index !== -1) {
+      const updated = [...prevCart];
+      updated[index].quantity += normalizedProduct.quantity;
+      return updated;
+    } else {
+      return [...prevCart, normalizedProduct];
+    }
+  });
+};
+
+
+  // Xóa sản phẩm
+  const removeFromCart = (productId) => {
+    setCart((prevCart) => prevCart.filter((item) => item.productId !== productId));
   };
 
   return (

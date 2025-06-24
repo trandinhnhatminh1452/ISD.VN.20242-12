@@ -16,6 +16,9 @@ import vn.aims.BookSeller.Service.EmailService;
 import vn.aims.BookSeller.Service.RoleService;
 import vn.aims.BookSeller.Service.UserServiceImpl;
 
+import java.security.Principal;
+import java.sql.Timestamp;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +50,10 @@ public class UserController {
 //
 //        return ResponseEntity.ok("Registered successfully. Please check your email!");
 //    }
+
+LocalDateTime localDateTime = LocalDateTime.now();
+Timestamp timestamp = Timestamp.valueOf(localDateTime);
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserCreationDTO dto) {
         if (userRepo.existsByEmail(dto.getEmail())) {
@@ -58,7 +65,9 @@ public class UserController {
         user.setPassword(passwordEncoder.encode(dto.getPassword())); // hash password
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
-        user.setCreated_at(LocalDateTime.now());
+
+        user.setCreated_at(timestamp);
+
         Set<Role> roles = new HashSet<>();
         roles.add(this.roleService.findByName("ROLE_USER")); //khi tao moi user luon la ROLE_USER
         user.setRoles(roles);
@@ -108,6 +117,19 @@ public class UserController {
     }
 
 
+@GetMapping("/me")
+public ResponseEntity<?> getCurrentUser(Principal principal) {
+    if (principal == null) {
+        return ResponseEntity.status(401).body("Chưa đăng nhập");
+    }
 
+    User user = userRepo.findByUsername(principal.getName());
+    if (user == null) {
+        return ResponseEntity.status(404).body("Không tìm thấy người dùng");
+    }
+
+    return ResponseEntity.ok(user);
+
+}
 
 }

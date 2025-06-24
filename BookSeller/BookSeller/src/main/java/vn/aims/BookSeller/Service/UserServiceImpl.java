@@ -24,6 +24,9 @@ public class UserServiceImpl implements UserService {
     private RoleService roleService;
 
 
+    @Autowired
+    private RoleService roleService;
+
 
     @Override
     public User findByUsername(String username) {
@@ -54,6 +57,20 @@ public class UserServiceImpl implements UserService {
         userRepo.deleteById(id);
     }
 
+     @Override
+    public User updateUser(int id, UserUpdateRequest u){
+        User user =getUser(id);
+
+        user.setPassword(u.getPassword());
+        user.setUsername(u.getUsername());
+        user.setPhone(u.getPhone());
+        return userRepo.save(user);
+    }
+
+    public User getUser(Integer id){
+        return userRepo.findById(id).orElseThrow(()->new RuntimeException("User not found"));
+    }
+
     @Override
     public User updateUser(int id, UserUpdateRequest u){
         User user =getUser(id);
@@ -79,6 +96,11 @@ public class UserServiceImpl implements UserService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                 user.getPassword(),
                 rolesToAuthorities(user.getRoles()));
+    }
+
+    public User authorize(User u, String authorities){
+        u.getRoles().add(this.roleService.findByName(authorities));
+        return this.userRepo.save(u);
     }
 
     private Collection<? extends GrantedAuthority> rolesToAuthorities(Collection<Role> roles){

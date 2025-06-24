@@ -37,11 +37,14 @@
   }
 }
 
-.grid {
+.books-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 3rem 8rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
   padding: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .pagination {
@@ -112,7 +115,7 @@
   .sort-select {
     padding: 8px 18px 8px 12px;
     border-radius: 22px;
-    width: 135px;
+    width: 164px;
     border: 1.5px solid #27ae60;
     font-size: 1rem;
     background: #f8f8f8;

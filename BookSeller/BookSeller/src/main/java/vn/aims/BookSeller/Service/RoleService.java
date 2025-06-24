@@ -22,4 +22,4 @@ public class RoleService {
     public Role findByName(String name){
         return this.roleRepo.findByName(name);
     }
-}
+

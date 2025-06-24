@@ -46,4 +46,4 @@ public class UserUpdateRequest {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-}
+
