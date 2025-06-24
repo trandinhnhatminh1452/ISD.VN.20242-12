@@ -1,5 +1,5 @@
 // src/components/ProductCard/ProductCard.js
-import React from "react";
+import React, { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import { FaCartPlus } from "react-icons/fa";
@@ -16,6 +16,7 @@ const ProductCard = ({ book }) => {
   console.log("🪪 productId trong ProductCard:", book.productId);
 
   const { addToCart } = useCart();
+    const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
 
   const price = book.price || 999999;
@@ -24,11 +25,6 @@ const ProductCard = ({ book }) => {
     ? `http://localhost:8080/image/${book.image}`
     : "/default-book-cover.jpg";
 
-  const bookToAdd = {
-    ...book,
-    productId: book.productId,
-    quantity: 1,
-  };
 
   const { user } = useAuth();
 
@@ -40,7 +36,7 @@ const ProductCard = ({ book }) => {
     }
 
     try {
-      addToCart(bookToAdd);
+      addToCart({ ...book, id: book.productId || book.id, productId: book.productId || book.id, quantity });
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       alert("Có lỗi khi thêm vào giỏ hàng. Vui lòng thử lại.");

@@ -31,19 +31,33 @@ export const CartProvider = ({ children }) => {
 
   // Thêm sản phẩm
   const addToCart = (product) => {
-    setCart((prevCart) => {
-      const index = prevCart.findIndex(
-        (item) => item.productId === product.productId
-      );
-      if (index !== -1) {
-        const updated = [...prevCart];
-        updated[index].quantity += product.quantity;
-        return updated;
-      } else {
-        return [...prevCart, product];
-      }
-    });
+    const normalizedProductId =
+      product.productId || product.id || product.idProduct;
+
+    if (!normalizedProductId) {
+      console.warn("❌ Không thể thêm sản phẩm không có productId hợp lệ:", product);
+    return;
+  }
+
+  const normalizedProduct = {
+    ...product,
+    productId: normalizedProductId, // Đảm bảo productId tồn tại
   };
+
+  setCart((prevCart) => {
+    const index = prevCart.findIndex(
+      (item) => item.productId === normalizedProduct.productId
+    );
+    if (index !== -1) {
+      const updated = [...prevCart];
+      updated[index].quantity += normalizedProduct.quantity;
+      return updated;
+    } else {
+      return [...prevCart, normalizedProduct];
+    }
+  });
+};
+
 
   // Xóa sản phẩm
   const removeFromCart = (productId) => {

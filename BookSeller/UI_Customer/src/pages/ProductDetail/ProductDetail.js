@@ -90,7 +90,7 @@ const ProductDetail = () => {
     }
 
     try {
-      addToCart({ ...book, quantity });
+      addToCart({ ...book, id: book.productId || book.id, productId: book.productId || book.id, quantity });
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       alert("Có lỗi khi thêm vào giỏ hàng. Vui lòng thử lại.");
@@ -110,7 +110,8 @@ const ProductDetail = () => {
     }
 
     const item = {
-      id: book?.productId || "",
+      id: book.productId || book.id,
+      productId: book.productId || book.id,
       name: book?.title || "",
       price: book?.price || 999999,
       quantity,

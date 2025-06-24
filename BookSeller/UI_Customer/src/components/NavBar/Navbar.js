@@ -188,6 +188,7 @@ const Navbar = () => {
                   <Link to="/profile" className="menu-item">
                     Tài Khoản
                   </Link>
+                  <Link to="/transactions" className="menu-item">Giao dịch</Link>
                   <div
                     onClick={logout}
                     className="menu-item"
