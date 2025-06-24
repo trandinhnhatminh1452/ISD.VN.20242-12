@@ -34,4 +34,10 @@ public interface ProductRepo extends JpaRepository<Product, Integer> {
     // Find products by category with limit
     @Query("SELECT p FROM Product p WHERE p.category = :category ORDER BY p.productId DESC")
     List<Product> findTopByCategoryOrderByProductIdDesc(@Param("category") String category, Pageable pageable);
+
+    public Product findByProductId(Integer productId);
+    
+
+
+
 } 

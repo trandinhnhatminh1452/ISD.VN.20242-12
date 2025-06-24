@@ -16,7 +16,7 @@ import vn.aims.BookSeller.Repository.ProductDetailCDRepository;
 import vn.aims.BookSeller.Repository.ProductDetailLPRepository;
 import vn.aims.BookSeller.Repository.ProductDetailDVDRepository;
 import vn.aims.BookSeller.Service.BookService;
-
+import vn.aims.BookSeller.Service.ProductService;
 import java.util.List;
 
 @RestController
@@ -38,6 +38,8 @@ public class ProductController {
     @Autowired
     private ProductDetailDVDRepository productDetailDVDRepository;
 
+    @Autowired
+    private ProductService productService;
     @GetMapping("/categories")
     public List<String> getCategories() {
         return bookService.getCategories();
@@ -127,6 +129,10 @@ public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
 }
 
 
+    @GetMapping("/{product_id}")
+    public Product findByProductId(@PathVariable(value="product_id") Integer productId){
+        return this.productService.findByProductId(productId);
+    }
     
 
 }

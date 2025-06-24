@@ -20,4 +20,5 @@ public class AuthorizationRequest {
     public void setAuthority(String authority) {
         this.authority = authority;
     }
+}
 
