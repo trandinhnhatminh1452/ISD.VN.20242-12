@@ -43,6 +43,7 @@ public class ProductController {
         return bookService.getCategories();
     }
 
+
     @GetMapping("/all")
     public Page<Product> findAll(
             @RequestParam(value = "query", defaultValue = "") String query,
@@ -56,6 +57,7 @@ public class ProductController {
 
         return this.bookService.findByTitleAndCategory(query, category, pageable);
     }
+
 
     @GetMapping("/creator/{productId}")
     public ResponseEntity<String> getCreator(
@@ -126,4 +128,5 @@ public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
 
 
     
+
 }

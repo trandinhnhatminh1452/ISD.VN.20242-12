@@ -1,5 +1,9 @@
 package vn.aims.BookSeller.Entity;
 
+
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -45,9 +49,11 @@ public class User {
     private String email;
     private String phone;
     private Boolean status;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     @JsonProperty("created_at")
 private Timestamp created_at;
+
 
 
     public Long getId() {

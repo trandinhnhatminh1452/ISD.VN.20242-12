@@ -18,6 +18,7 @@ import vn.aims.BookSeller.Service.UserServiceImpl;
 
 import java.security.Principal;
 import java.sql.Timestamp;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -64,7 +65,9 @@ Timestamp timestamp = Timestamp.valueOf(localDateTime);
         user.setPassword(passwordEncoder.encode(dto.getPassword())); // hash password
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
+
         user.setCreated_at(timestamp);
+
         Set<Role> roles = new HashSet<>();
         roles.add(this.roleService.findByName("ROLE_USER")); //khi tao moi user luon la ROLE_USER
         user.setRoles(roles);
@@ -126,6 +129,7 @@ public ResponseEntity<?> getCurrentUser(Principal principal) {
     }
 
     return ResponseEntity.ok(user);
+
 }
 
 }
