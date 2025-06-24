@@ -36,7 +36,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RoleService roleService;
-//    @PostMapping("/register")
+    //    @PostMapping("/register")
 //    public ResponseEntity<?> register(@RequestBody User user) {
 //        if (userRepo.existsByEmail(user.getEmail())) {
 //            return ResponseEntity.badRequest().body("Email already used");
@@ -85,7 +85,7 @@ public class UserController {
     @PutMapping("/{id}")
     public User updateUser(@PathVariable int id, @RequestBody UserUpdateRequest userUpdateRequest){
         try{
-        return this.userService.updateUser(id, userUpdateRequest);}
+            return this.userService.updateUser(id, userUpdateRequest);}
         catch (Exception e){
             return null;
         }

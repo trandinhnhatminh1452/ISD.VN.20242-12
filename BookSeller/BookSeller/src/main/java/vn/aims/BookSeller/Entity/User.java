@@ -25,11 +25,11 @@ public class User {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-     @JoinTable(
-             name = "user_role",
-             joinColumns=@JoinColumn(name = "user_id"),
-             inverseJoinColumns=@JoinColumn(name = "role_id")
-     )
+    @JoinTable(
+            name = "user_role",
+            joinColumns=@JoinColumn(name = "user_id"),
+            inverseJoinColumns=@JoinColumn(name = "role_id")
+    )
 
     Collection<Role> roles;
 
@@ -45,7 +45,7 @@ public class User {
     private String email;
     private String phone;
     private Boolean status;
-    private LocalDateTime created_at;
+    private Timestamp created_at;
 
     public Integer getId() {
         return id;
@@ -77,5 +77,22 @@ public class User {
 
     public void setRoles(Collection<Role> roles) {
         this.roles = roles;
+    }
+
+    public void setCreated_at(LocalDateTime now) {
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+
+    public void setCart(Cart cart) {
+    }
+
+    public void setEmail(String email) {
+    }
+
+    public void setPhone(String phone) {
     }
 }

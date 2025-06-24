@@ -1,10 +1,14 @@
 package vn.aims.BookSeller.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -49,16 +53,24 @@ public class Product {
     @Column(name = "created_by")
     private Integer createdBy;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItems = new ArrayList<>();
+
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private ProductDetailBook productDetailBook;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private ProductDetailCD productDetailCD;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private ProductDetailDVD productDetailDVD;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private ProductDetailLP productDetailLP;
 
     // Getters and Setters ...

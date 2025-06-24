@@ -1,5 +1,6 @@
 package vn.aims.BookSeller.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class ProductDetailLP {
 
     @OneToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     @MapsId
     private Product product;
 

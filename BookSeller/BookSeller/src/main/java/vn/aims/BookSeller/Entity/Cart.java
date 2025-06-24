@@ -31,7 +31,11 @@ public class Cart {
     @JsonBackReference
     private User user;
 
+    public void setSessionId(String string) {
+    }
+
+    public void setUser(User user) {
+    }
+
     // Getters and Setters ...
 }
-
-
