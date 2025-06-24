@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../../context/AuthContext';
 import "./Login.scss";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
-    email: "",
+    username: "", 
     password: "",
   });
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,43 +20,65 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8080/api/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+        console.log('Sending login request with:', {
+            username: formData.username,
+            password: formData.password
+        });
 
-      const result = await response.json();
+        const formBody = new URLSearchParams();
+        formBody.append("username", formData.username);
+        formBody.append("password", formData.password);
 
-      if (response.ok) {
-        if (result && typeof result === "object") {
-          localStorage.setItem("user", JSON.stringify(result));
-          navigate("/");
-          window.location.reload();
-        } else {
-          console.warn("Server trả về không đúng định dạng JSON:", result);
-          alert(
-            "Đăng nhập thành công nhưng server không trả về dữ liệu người dùng hợp lệ."
-          );
-        }
-      } else {
-        alert(result.error || result.message || "Đăng nhập thất bại");
-      }
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/login', true);
+        xhr.withCredentials = true;
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onload = async function () {
+          if (xhr.status === 200) {
+            // Gọi API lấy user info
+            try {
+              const res = await fetch("http://localhost:8080/api/user/me", {
+                credentials: "include",
+              });
+              const userData = await res.json();
+        
+              if (res.ok) {
+                localStorage.setItem("user", JSON.stringify(userData));
+                navigate("/");
+                window.location.reload();
+              } else {
+                console.error("Không lấy được thông tin người dùng:", userData);
+                setError("Không lấy được thông tin tài khoản");
+              }
+            } catch (err) {
+              console.error("Lỗi khi lấy user:", err);
+              setError("Lỗi khi lấy thông tin tài khoản");
+            }
+          } else if (xhr.status === 401) {
+            setError("Sai tài khoản hoặc mật khẩu");
+          } else {
+            setError("Đăng nhập thất bại");
+          }
+        };
+        
+
+        xhr.onerror = function() {
+            console.error('Network error:', xhr.status);
+            setError("Lỗi kết nối đến server");
+        };
+
+        xhr.send(formBody.toString());
     } catch (err) {
-      console.error("Lỗi khi gửi request:", err);
-      alert("Lỗi kết nối đến server");
+        console.error("Lỗi kết nối:", err);
+        setError("Lỗi kết nối đến server");
     }
-  };
+};
 
   return (
     <div className="login-container">
@@ -63,16 +87,16 @@ const Login = () => {
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="username">Tên đăng nhập</label>
             <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               required
               className="form-input"
-              placeholder="Nhập email"
+              placeholder="Nhập tên đăng nhập"
             />
           </div>
           <div className="form-group">

@@ -5,32 +5,58 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
-import vn.aims.BookSeller.DTO.request.LoginDTO;
+import vn.aims.BookSeller.DTO.request.AuthorizationRequest;
 import vn.aims.BookSeller.DTO.request.UserCreationDTO;
+import vn.aims.BookSeller.DTO.request.UserUpdateRequest;
+import vn.aims.BookSeller.Entity.Cart;
+import vn.aims.BookSeller.Entity.Role;
 import vn.aims.BookSeller.Entity.User;
 import vn.aims.BookSeller.Repository.UserRepo;
 import vn.aims.BookSeller.Service.EmailService;
+import vn.aims.BookSeller.Service.RoleService;
+import vn.aims.BookSeller.Service.UserServiceImpl;
+
+import java.security.Principal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-
     @Autowired
     private UserRepo userRepo;
-
     @Autowired
     private EmailService emailService;
-
     @Autowired
+    private UserServiceImpl userService;
+    @Autowired
+
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private RoleService roleService;
+//    @PostMapping("/register")
+//    public ResponseEntity<?> register(@RequestBody User user) {
+//        if (userRepo.existsByEmail(user.getEmail())) {
+//            return ResponseEntity.badRequest().body("Email already used");
+//        }
+//
+//        userRepo.save(user);
+//        emailService.sendRegistrationEmail(user.getEmail(), user.getUsername());
+//
+//        return ResponseEntity.ok("Registered successfully. Please check your email!");
+//    }
+
+LocalDateTime localDateTime = LocalDateTime.now();
+Timestamp timestamp = Timestamp.valueOf(localDateTime);
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserCreationDTO dto) {
         if (userRepo.existsByEmail(dto.getEmail())) {
-            return ResponseEntity.badRequest().body(
-                Map.of("error", "Email already in use")
-            );
+            return ResponseEntity.badRequest().body("Email already in use");
         }
 
         User user = new User();
@@ -38,38 +64,68 @@ public class UserController {
         user.setPassword(passwordEncoder.encode(dto.getPassword())); // hash password
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
+        user.setCreated_at(timestamp);
+        Set<Role> roles = new HashSet<>();
+        roles.add(this.roleService.findByName("ROLE_USER")); //khi tao moi user luon la ROLE_USER
+        user.setRoles(roles);
+
 
         userRepo.save(user);
         emailService.sendRegistrationEmail(user.getEmail(), user.getUsername());
+        Cart cart = new Cart();
+        cart.setSessionId(UUID.randomUUID().toString());
+        cart.setUser(user);
 
-        return ResponseEntity.ok(
-            Map.of("message", "Registered successfully!")
-        );
+        user.setCart(cart); // Gán lại cho chiều ngược
+        userRepo.save(user); // Hibernate sẽ cascade lưu luôn cart
+
+
+        return ResponseEntity.ok("Registered successfully!");
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
-        User user = userRepo.findByEmail(dto.getEmail());
-        if (user == null) {
-            return ResponseEntity.status(401).body(
-                Map.of("error", "Email không tồn tại")
-            );
-        }
-
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(401).body(
-                Map.of("error", "Mật khẩu không đúng")
-            );
-        }
-
-        return ResponseEntity.ok(Map.of(
-            "id", user.getId(),
-            "username", user.getUsername(),
-            "email", user.getEmail(),
-            "phone", user.getPhone(),
-            "created_at", user.getCreated_at(),
-            "message", "Đăng nhập thành công"
-        ));
+    @GetMapping("/{id}")
+    public List<User> findById(@PathVariable int id){
+        return this.userRepo.findById(id);
     }
+
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable int id, @RequestBody UserUpdateRequest userUpdateRequest){
+        try{
+        return this.userService.updateUser(id, userUpdateRequest);}
+        catch (Exception e){
+            return null;
+        }
+    }
+
+//    @GetMapping("/roles")
+//    public List<Role> getAllRoles(){
+//        return this.roleService.findAll();
+//    }
+//
+//    @GetMapping("/roles/{name}")
+//    public Role getRole(@PathVariable String name){
+//        return this.roleService.findByName(name);
+//    }  ==> test
+
+    @PostMapping("/authorize")
+    public ResponseEntity<User> authorize(@RequestBody AuthorizationRequest request) {
+        User updatedUser = userService.authorize(userService.getUser(request.getId()), request.getAuthority());
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
+@GetMapping("/me")
+public ResponseEntity<?> getCurrentUser(Principal principal) {
+    if (principal == null) {
+        return ResponseEntity.status(401).body("Chưa đăng nhập");
+    }
+
+    User user = userRepo.findByUsername(principal.getName());
+    if (user == null) {
+        return ResponseEntity.status(404).body("Không tìm thấy người dùng");
+    }
+
+    return ResponseEntity.ok(user);
+}
 
 }

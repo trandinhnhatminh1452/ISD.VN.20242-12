@@ -5,10 +5,11 @@ import "./Register.scss";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
+    phone: ""
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -37,10 +38,10 @@ const Register = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: formData.name, // map đúng tên trong DTO backend
+          username: formData.username,
           email: formData.email,
           password: formData.password,
-          phone: "", // thêm nếu cần
+          phone: formData.phone
         }),
       });
 
@@ -62,16 +63,29 @@ const Register = () => {
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit} className="register-form">
           <div className="form-group">
-            <label htmlFor="name">Họ và tên</label>
+            <label htmlFor="username">Tên tài khoản</label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="username"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               required
               className="form-input"
-              placeholder="Nhập họ và tên"
+              placeholder="Nhập tên tài khoản"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="phone">Số điện thoại</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+              className="form-input"
+              placeholder="Nhập số điện thoại"
             />
           </div>
           <div className="form-group">
