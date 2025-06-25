@@ -1,6 +1,15 @@
 package vn.aims.BookSeller.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import vn.aims.BookSeller.Entity.Product;
+import vn.aims.BookSeller.Service.ProductService;
+import jakarta.validation.Valid;
+
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,13 +26,22 @@ import vn.aims.BookSeller.Repository.ProductDetailLPRepository;
 import vn.aims.BookSeller.Repository.ProductDetailDVDRepository;
 import vn.aims.BookSeller.Service.BookService;
 import vn.aims.BookSeller.Service.ProductService;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
+@Validated
 public class ProductController {
 
     @Autowired
+
+    private ProductService productService;
+
+    @GetMapping
+    public List<Product> getAllProducts() {
+        return productService.findAll();
+
     private BookService bookService;
 
     @Autowired
@@ -43,8 +61,20 @@ public class ProductController {
     @GetMapping("/categories")
     public List<String> getCategories() {
         return bookService.getCategories();
+
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        Product product = productService.findById(id);
+        return ResponseEntity.ok(product);
+    }
+
+
+    @PostMapping
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
+        Product savedProduct = productService.save(product);
+        return ResponseEntity.ok(savedProduct);
 
     @GetMapping("/all")
     public Page<Product> findAll(
@@ -58,8 +88,22 @@ public class ProductController {
         Pageable pageable = PageRequest.of(safePage, safeSize);
 
         return this.bookService.findByTitleAndCategory(query, category, pageable);
+
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @Valid @RequestBody Product product) {
+        Product updatedProduct = productService.update(id, product);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}
 
     @GetMapping("/creator/{productId}")
     public ResponseEntity<String> getCreator(
@@ -136,3 +180,4 @@ public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
     
 
 }
+

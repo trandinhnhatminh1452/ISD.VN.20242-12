@@ -29,11 +29,11 @@ public class User {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-     @JoinTable(
-             name = "user_role",
-             joinColumns=@JoinColumn(name = "user_id"),
-             inverseJoinColumns=@JoinColumn(name = "role_id")
-     )
+    @JoinTable(
+            name = "user_role",
+            joinColumns=@JoinColumn(name = "user_id"),
+            inverseJoinColumns=@JoinColumn(name = "role_id")
+    )
 
     Collection<Role> roles;
 
@@ -49,6 +49,7 @@ public class User {
     private String email;
     private String phone;
     private Boolean status;
+
 
     @Column(name = "created_at", insertable = false, updatable = false)
     @JsonProperty("created_at")
@@ -88,6 +89,23 @@ private Timestamp created_at;
         this.roles = roles;
     }
 
+
+   
+
+    public String getEmail() {
+        return email;
+    }
+
+
+    public void setCart(Cart cart) {
+    }
+
+    public void setEmail(String email) {
+    }
+
+    public void setPhone(String phone) {
+    }
+
     public String getPhone() {
     return phone;
 }
@@ -104,20 +122,12 @@ public void setCreated_at(Timestamp created_at) {
     this.created_at = created_at;
 }
 
-public String getEmail() {
-    return email;
-}
 
-public void setEmail(String email) {
-    this.email = email;
-}
 
 public Cart getCart() {
     return cart;
 }
 
-public void setCart(Cart cart) {
-    this.cart = cart;
-}
+
 
 }

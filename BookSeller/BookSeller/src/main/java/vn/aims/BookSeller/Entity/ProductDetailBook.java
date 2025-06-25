@@ -1,5 +1,6 @@
 package vn.aims.BookSeller.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -47,6 +48,14 @@ public class ProductDetailBook {
 
     @Column(name = "genre")
     private String genre;
+
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "product_id")
+    @JsonBackReference
+    private Product product;
+
 
     // Getters and Setters ...
 

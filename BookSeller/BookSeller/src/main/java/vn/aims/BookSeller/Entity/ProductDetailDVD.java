@@ -1,5 +1,6 @@
 package vn.aims.BookSeller.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -16,8 +17,11 @@ public class ProductDetailDVD {
     private Integer productId;
 
     @OneToOne
-    @PrimaryKeyJoinColumn
+
+    @JoinColumn(name = "product_id")
     @JsonBackReference
+    @MapsId
+
     private Product product;
 
     @Column(name = "disc_type")

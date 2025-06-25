@@ -39,7 +39,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RoleService roleService;
-//    @PostMapping("/register")
+    //    @PostMapping("/register")
 //    public ResponseEntity<?> register(@RequestBody User user) {
 //        if (userRepo.existsByEmail(user.getEmail())) {
 //            return ResponseEntity.badRequest().body("Email already used");
@@ -94,7 +94,7 @@ Timestamp timestamp = Timestamp.valueOf(localDateTime);
     @PutMapping("/{id}")
     public User updateUser(@PathVariable int id, @RequestBody UserUpdateRequest userUpdateRequest){
         try{
-        return this.userService.updateUser(id, userUpdateRequest);}
+            return this.userService.updateUser(id, userUpdateRequest);}
         catch (Exception e){
             return null;
         }
@@ -129,6 +129,7 @@ public ResponseEntity<?> getCurrentUser(Principal principal) {
     }
 
     return ResponseEntity.ok(user);
+
 
 }
 

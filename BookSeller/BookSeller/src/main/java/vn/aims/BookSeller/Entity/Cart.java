@@ -30,6 +30,16 @@ public class Cart {
     @JsonBackReference
     private User user;
 
+
+    public void setSessionId(String string) {
+    }
+
+    public void setUser(User user) {
+    }
+
+    // Getters and Setters ...
+}
+
     // ====== Getter & Setter ======
 
     public Integer getCartId() {
@@ -68,7 +78,6 @@ public class Cart {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    
 }
+
