@@ -2,18 +2,31 @@ package vn.aims.BookSeller.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.time.*;
 
 @Entity
-@Data
 @Table(name = "product_detail_book")
 public class ProductDetailBook {
 
     @Id
     @Column(name = "product_id")
     private Integer productId;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "product_id")
+    @JsonBackReference
+    private Product product;
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
     @Column(name = "authors")
     private String authors;
@@ -36,11 +49,13 @@ public class ProductDetailBook {
     @Column(name = "genre")
     private String genre;
 
+
     @OneToOne
     @MapsId
     @JoinColumn(name = "product_id")
     @JsonBackReference
     private Product product;
+
 
     // Getters and Setters ...
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.math.BigDecimal;
 import java.time.*;
@@ -19,6 +20,20 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
     private Integer productId;
+
+    // Relationships with product details
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private ProductDetailBook productDetailBook;
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    private ProductDetailLP productDetailLP;
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    private ProductDetailDVD productDetailDVD;
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
+    private ProductDetailCD productDetailCD;
 
     @Column(name = "title")
     private String title;
@@ -53,6 +68,7 @@ public class Product {
     @Column(name = "created_by")
     private Integer createdBy;
 
+
     @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -72,8 +88,52 @@ public class Product {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonManagedReference
     private ProductDetailLP productDetailLP;
+    // ✅ Thêm trường image
+    @Column(name = "image")
+    private String image;
 
-    // Getters and Setters ...
+    // --- GETTER & SETTER ---
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
+    public ProductDetailBook getProductDetailBook() {
+        return productDetailBook;
+    }
+
+    public void setProductDetailBook(ProductDetailBook productDetailBook) {
+        this.productDetailBook = productDetailBook;
+    }
+
+
+    public ProductDetailLP getProductDetailLP() {
+        return productDetailLP;
+    }
+
+    public void setProductDetailLP(ProductDetailLP productDetailLP) {
+        this.productDetailLP = productDetailLP;
+    }
+
+    public ProductDetailDVD getProductDetailDVD() {
+        return productDetailDVD;
+    }
+
+    public void setProductDetailDVD(ProductDetailDVD productDetailDVD) {
+        this.productDetailDVD = productDetailDVD;
+    }
+
+    public ProductDetailCD getProductDetailCD() {
+        return productDetailCD;
+    }
+
+    public void setProductDetailCD(ProductDetailCD productDetailCD) {
+        this.productDetailCD = productDetailCD;
+    }
 
     public String getTitle() {
         return title;
@@ -162,5 +222,13 @@ public class Product {
     public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
     }
-}
 
+    // ✅ Getter & Setter cho image
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+}

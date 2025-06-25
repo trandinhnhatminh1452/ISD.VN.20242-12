@@ -1,5 +1,6 @@
 package vn.aims.BookSeller.Service;
 
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import vn.aims.BookSeller.Entity.Product;
@@ -10,6 +11,13 @@ import java.util.List;
 @Service
 public class ProductService {
     private final ProductRepository repo;
+   @Autowired
+    private ProductRepo productRepo;
+
+  @Autowired
+    public Product findByProductId(Integer productId){
+        return productRepo.findByProductId(productId);
+    }
 
     public ProductService(ProductRepository repo) {
         this.repo = repo;
@@ -37,3 +45,4 @@ public class ProductService {
         repo.deleteById(id);
     }
 }
+

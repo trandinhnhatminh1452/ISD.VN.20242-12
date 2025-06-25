@@ -55,6 +55,7 @@ public class Order {
     @Column(name = "status", length = 5)
     private String status;
 
+
     @Column(name = "created_at", columnDefinition = "timestamp with time zone")
     private Timestamp createdAt;
 
@@ -91,4 +92,10 @@ public class Order {
     public void setStatus(String status) { this.status = status; }
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems;
+
+ 
 }

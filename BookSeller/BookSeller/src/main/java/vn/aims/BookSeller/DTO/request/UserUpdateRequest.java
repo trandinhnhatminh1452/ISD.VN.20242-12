@@ -47,3 +47,4 @@ public class UserUpdateRequest {
         this.phone = phone;
     }
 }
+

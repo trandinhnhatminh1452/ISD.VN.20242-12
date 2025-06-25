@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaAngleRight } from 'react-icons/fa';
 import "./order-guide.scss";
-import "../../../pages/BookDetail/BookDetail.scss";
+import "../../../pages/ProductDetail/ProductDetail.scss";
 
 const OrderGuide = () => {
   return (
