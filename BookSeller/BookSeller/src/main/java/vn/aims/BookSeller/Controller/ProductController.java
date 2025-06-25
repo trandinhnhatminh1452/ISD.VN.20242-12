@@ -128,11 +128,6 @@ public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
     return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
 }
 
-
-    @GetMapping("/{product_id}")
-    public Product findByProductId(@PathVariable(value="product_id") Integer productId){
-        return this.productService.findByProductId(productId);
-    }
     
 
 }

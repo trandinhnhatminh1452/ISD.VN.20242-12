@@ -11,6 +11,7 @@ import vn.aims.BookSeller.Entity.Role;
 import vn.aims.BookSeller.Entity.User;
 import vn.aims.BookSeller.Repository.RoleRepo;
 import vn.aims.BookSeller.Repository.UserRepo;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,9 +24,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RoleService roleService;
 
-
     @Autowired
-    private RoleService roleService;
+    private PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -57,29 +57,22 @@ public class UserServiceImpl implements UserService {
         userRepo.deleteById(id);
     }
 
-     @Override
-    public User updateUser(int id, UserUpdateRequest u){
-        User user =getUser(id);
-
-        user.setPassword(u.getPassword());
-        user.setUsername(u.getUsername());
-        user.setPhone(u.getPhone());
-        return userRepo.save(user);
-    }
-
-    public User getUser(Integer id){
-        return userRepo.findById(id).orElseThrow(()->new RuntimeException("User not found"));
-    }
-
     @Override
     public User updateUser(int id, UserUpdateRequest u){
-        User user =getUser(id);
+        User user = getUser(id);
 
-        user.setPassword(u.getPassword());
+        if (u.getPassword() == null || u.getPassword().trim().isEmpty()) {
+            u.setPassword(user.getPassword());
+        } else {
+            u.setPassword(passwordEncoder.encode(u.getPassword()));
+        }
+    
         user.setUsername(u.getUsername());
         user.setPhone(u.getPhone());
+    
         return userRepo.save(user);
     }
+    
 
     public User getUser(Integer id){
         return userRepo.findById(id).orElseThrow(()->new RuntimeException("User not found"));
@@ -107,11 +100,6 @@ public class UserServiceImpl implements UserService {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
-    }
-
-    public User authorize(User u, String authorities){
-        u.getRoles().add(this.roleService.findByName(authorities));
-        return this.userRepo.save(u);
     }
 
 

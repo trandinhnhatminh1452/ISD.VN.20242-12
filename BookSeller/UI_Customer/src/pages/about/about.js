@@ -95,23 +95,6 @@ const About = () => {
           </div>
         </div>
 
-        <div className="section contact-section">
-          <Link to="/contact" className="contact-link">Liên hệ với chúng tôi</Link>
-          <div className="contact-info">
-            <div className="info-item">
-              <FaMapMarkerAlt />
-              <p>Số 1, Đại Cồ Việt, Bách Khoa, Hai Bà Trưng, Hà Nội.</p>
-            </div>
-            <div className="info-item">
-              <FaPhone />
-              <p>Hotline: 0123456789</p>
-            </div>
-            <div className="info-item">
-              <FaEnvelope />
-              <p>Email: G12@gmail.com</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

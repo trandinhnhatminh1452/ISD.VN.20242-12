@@ -53,7 +53,7 @@ const Support = () => {
               </div>
               <div className="contact-item">
                 <h3>Email hỗ trợ</h3>
-                <p>support@nhanam.vn</p>
+                <p>support@g12.vn</p>
               </div>
               <div className="contact-item">
                 <h3>Giờ làm việc</h3>

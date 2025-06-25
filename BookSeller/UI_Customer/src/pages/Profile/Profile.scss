@@ -65,6 +65,18 @@
   transition: background 0.3s;
 }
 
+.update-button {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-left: 100px;
+}
+
 .logout-button:hover {
   background-color: #c0392b;
 }

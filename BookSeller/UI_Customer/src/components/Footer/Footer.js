@@ -14,13 +14,6 @@ const Footer = () => {
           <a href="#"><img src="https://bizweb.dktcdn.net/100/363/455/themes/918830/assets/shopee-icon.png?1724988401192" alt="Shopee" className="social-icon" /></a>
           <a href="#"><img src="https://bizweb.dktcdn.net/100/363/455/themes/918830/assets/tiktok-icon.png?1724988401192" alt="Tiktok" className="social-icon" /></a>
         </div>
-        <div className="footer__subscribe">
-          <p>NHẬN THÔNG TIN KHUYẾN MÃI TỪ CHÚNG TÔI</p>
-          <div className="footer__input-group">
-            <input type="email" placeholder="Nhập email ưu đãi" />
-            <button>Đăng kí</button>
-          </div>
-        </div>
       </div>
 
       <div className="footer__main">

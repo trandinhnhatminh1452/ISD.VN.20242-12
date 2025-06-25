@@ -39,10 +39,10 @@ const PaymentGuide = () => {
             <li>Chuyển khoản qua Internet Banking</li>
             <li>Chuyển khoản qua Mobile Banking</li>
             <li>Chuyển khoản tại quầy giao dịch</li>
-            <li>Thông tin tài khoản:</li>
-            <li>Ngân hàng: Vietcombank</li>
-            <li>Số tài khoản: 0011000000123</li>
-            <li>Chủ tài khoản: Công ty Sách Nhanh</li>
+            <li>Thông tin tài khoản</li>
+            <li>Ngân hàng</li>
+            <li>Số tài khoản</li>
+            <li>Chủ tài khoản</li>
           </ul>
         </div>
 
@@ -59,7 +59,7 @@ const PaymentGuide = () => {
         <div className="guide-section">
           <h2>4. Thanh toán qua ví điện tử</h2>
           <ul>
-            <li>Hỗ trợ các ví: Momo, ZaloPay, ViettelPay</li>
+            <li>Hỗ trợ ví: VnPay</li>
             <li>Quy trình nhanh chóng và tiện lợi</li>
             <li>Không cần đăng ký tài khoản</li>
             <li>Không mất phí giao dịch</li>
@@ -73,6 +73,7 @@ const PaymentGuide = () => {
             <li>Giữ lại thông tin giao dịch</li>
             <li>Liên hệ hỗ trợ nếu có vấn đề</li>
             <li>Chúng tôi không chịu trách nhiệm với giao dịch không chính xác</li>
+            <li>Thuế VAT (5%) sẽ được tính trực tiếp vào đơn hàng</li>
           </ul>
         </div>
       </div>

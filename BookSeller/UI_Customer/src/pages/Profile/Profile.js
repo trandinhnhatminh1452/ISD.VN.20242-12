@@ -39,6 +39,12 @@ const Profile = () => {
             <button onClick={handleLogout} className="logout-button">
               Đăng xuất
             </button>
+            <button
+    onClick={() => navigate("/update-profile")}
+    className="update-button"
+  >
+    Cập nhật thông tin
+  </button>
           </div>
         </div>
       </div>

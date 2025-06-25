@@ -21,6 +21,7 @@ import Profile from "./pages/Profile/Profile";
 import Payment from "./components/Payment/Payment";
 import Transactions from "./pages/Transactions/Transactions";
 import InvoiceDetail from "./pages/InvoiceDetail/InvoiceDetail";
+import UpdateProfile from "./pages/Profile/updateProfile";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
               <Route path="/transactions" element={<Transactions />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/invoice/:id" element={<InvoiceDetail />} />
+              <Route path="/update-profile" element={<UpdateProfile />} />
             </Routes>
             <Footer />
           </SearchProvider>

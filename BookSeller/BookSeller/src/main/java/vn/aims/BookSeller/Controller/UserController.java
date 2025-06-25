@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import vn.aims.BookSeller.DTO.request.AuthorizationRequest;
 import vn.aims.BookSeller.DTO.request.UserCreationDTO;
+import vn.aims.BookSeller.DTO.request.UserDTO;
 import vn.aims.BookSeller.DTO.request.UserUpdateRequest;
 import vn.aims.BookSeller.Entity.Cart;
 import vn.aims.BookSeller.Entity.Role;
@@ -92,13 +93,15 @@ Timestamp timestamp = Timestamp.valueOf(localDateTime);
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable int id, @RequestBody UserUpdateRequest userUpdateRequest){
-        try{
-        return this.userService.updateUser(id, userUpdateRequest);}
-        catch (Exception e){
-            return null;
+    public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody UserUpdateRequest userUpdateRequest) {
+        try {
+            User updatedUser = this.userService.updateUser(id, userUpdateRequest);
+            return ResponseEntity.ok(new UserDTO(updatedUser)); // ✅ Trả về DTO mới
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Cập nhật thất bại");
         }
     }
+    
 
 //    @GetMapping("/roles")
 //    public List<Role> getAllRoles(){
@@ -128,8 +131,7 @@ public ResponseEntity<?> getCurrentUser(Principal principal) {
         return ResponseEntity.status(404).body("Không tìm thấy người dùng");
     }
 
-    return ResponseEntity.ok(user);
-
+    return ResponseEntity.ok(new UserDTO(user)); // ✅ Trả ra DTO thay vì entity User gốc
 }
 
 }
