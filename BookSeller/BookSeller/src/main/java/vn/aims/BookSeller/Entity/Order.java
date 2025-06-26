@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -68,5 +69,57 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
-    // Getters and Setters ...
+    public Integer getOrderId() { return orderId; }
+    public void setOrderId(Integer orderId) { this.orderId = orderId; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getProvinceCity() { return provinceCity; }
+    public void setProvinceCity(String provinceCity) { this.provinceCity = provinceCity; }
+
+    public Boolean getRushOrder() { return rushOrder; }
+    public void setRushOrder(Boolean rushOrder) { this.rushOrder = rushOrder; }
+
+    public LocalTime getRushTime() { return rushTime; }
+    public void setRushTime(LocalTime rushTime) { this.rushTime = rushTime; }
+
+    public String getRushInstruction() { return rushInstruction; }
+    public void setRushInstruction(String rushInstruction) { this.rushInstruction = rushInstruction; }
+
+    public BigDecimal getDeliveryFee() { return deliveryFee; }
+    public void setDeliveryFee(BigDecimal deliveryFee) { this.deliveryFee = deliveryFee; }
+
+    public BigDecimal getVatFee() { return vatFee; }
+    public void setVatFee(BigDecimal vatFee) { this.vatFee = vatFee; }
+
+    public BigDecimal getTotalPrice() { return totalPrice; }
+    public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
+
+    public BigDecimal getFinalAmount() { return finalAmount; }
+    public void setFinalAmount(BigDecimal finalAmount) { this.finalAmount = finalAmount; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+    }
+    public OrderItem[] getOrderItems() {
+        return new OrderItem[0];
+    }
 }
