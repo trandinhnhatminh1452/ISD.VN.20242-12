@@ -1,4 +1,4 @@
-package vn.aims.BookSeller;
+package vn.aims.BookSeller.Service;
 
 import vn.aims.BookSeller.Entity.Product;
 
