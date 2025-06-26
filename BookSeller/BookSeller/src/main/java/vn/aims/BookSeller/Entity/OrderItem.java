@@ -1,6 +1,5 @@
 package vn.aims.BookSeller.Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,13 +8,11 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_item_id")
-    private Long orderItemId;
+    private Integer orderItemId;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    @JsonBackReference
     private Order order;
-
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -28,8 +25,8 @@ public class OrderItem {
     private Double price;
 
     // Getters and Setters
-    public Long getOrderItemId() { return orderItemId; }
-    public void setOrderItemId(Long orderItemId) { this.orderItemId = orderItemId; }
+    public Integer getOrderItemId() { return orderItemId; }
+    public void setOrderItemId(Integer orderItemId) { this.orderItemId = orderItemId; }
     public Order getOrder() { return order; }
     public void setOrder(Order order) { this.order = order; }
     public Product getProduct() { return product; }

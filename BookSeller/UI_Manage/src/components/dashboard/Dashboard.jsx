@@ -3,7 +3,15 @@ import StatsCard from './StatsCard';
 import PriceChanges from './PriceChanges';
 import OutOfStock from './OutOfStock';
 import axios from 'axios';
-import { Package, AlertTriangle, ClipboardList, DollarSign } from 'lucide-react';
+import {
+  Package,
+  AlertTriangle,
+  ClipboardList,
+  DollarSign,
+  Book,
+  Disc,
+  Film
+} from 'lucide-react';
 
 const Dashboard = () => {
   const [stats, setStats] = useState([]);
@@ -12,12 +20,30 @@ const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const getIconByType = (type) => {
+    const icons = {
+      Book: Book,
+      CD: Disc,
+      LP: Disc,
+      DVD: Film
+    };
+    return icons[type] || Package;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get('http://localhost:8080/api/products');
-        const productData = res.data || [];
+        const [productRes, orderRes] = await Promise.all([
+          axios.get('http://localhost:8080/api/products'),
+          axios.get('http://localhost:8080/api/orders')
+        ]);
+
+        const productData = productRes.data || [];
+        const orders = orderRes.data || [];
+
+        const pendingOrdersCount = orders.filter(order => order.status === '0').length;
+
         setProducts(productData);
 
         setStats([
@@ -35,7 +61,7 @@ const Dashboard = () => {
           },
           {
             title: 'Đơn chờ duyệt',
-            value: '8',
+            value: pendingOrdersCount.toString(),
             changeType: 'positive',
             icon: ClipboardList,
             color: 'orange'
@@ -53,11 +79,12 @@ const Dashboard = () => {
         const lowStockItems = productData
           .filter(p => p.quantity < 5)
           .map(p => ({
-            name: p.name,
-            type: p.type,
+            title: p.name || p.title || '[Không rõ tên]',
+            type: p.type || p.category || '[Không rõ loại]',
             remaining: `Còn ${p.quantity}`,
-            icon: getIconByType(p.type)
+            icon: getIconByType(p.type || p.category)
           }));
+
         setOutOfStock(lowStockItems);
       } catch (error) {
         console.error('Lỗi khi tải dữ liệu:', error.message);
@@ -67,21 +94,17 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
-  const getIconByType = (type) => {
-    const icons = { Book: 'Book', CD: 'Disc', LP: 'Disc', DVD: 'Film' };
-    return icons[type] || 'Package';
-  };
-
   const handlePriceChange = (priceChange) => {
     if (priceChange) {
-      setPriceChanges(prev => [priceChange, ...prev].slice(0, 3)); // Giữ 3 thay đổi gần nhất
+      setPriceChanges(prev => [priceChange, ...prev].slice(0, 3));
     }
   };
 
-  if (loading) return <div>Đang tải dữ liệu...</div>;
+  if (loading) return <div className="p-6 text-center text-gray-600">Đang tải dữ liệu...</div>;
 
   return (
     <>
@@ -91,7 +114,6 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PriceChanges data={priceChanges} />
         <OutOfStock data={outOfStock} />

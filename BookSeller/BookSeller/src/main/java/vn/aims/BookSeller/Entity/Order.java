@@ -1,91 +1,112 @@
 package vn.aims.BookSeller.Entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalTime;
 
 @Entity
-@Table(name = "order")
+@Table(name = "\"order\"")
 public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    private Long orderId;
+    private Integer orderId;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "email")
+    @Column(name = "name", length = 25)
+    private String name;
+
+    @Column(name = "email", length = 25)
     private String email;
 
-    @Column(name = "phone")
+    @Column(name = "phone", length = 12)
     private String phone;
 
-    @Column(name = "address")
+    @Column(name = "address", columnDefinition = "TEXT")
     private String address;
 
-    @Column(name = "province_city")
+    @Column(name = "province_city", length = 100)
     private String provinceCity;
 
-    @Column(name = "rush")
-    private Boolean rush;
+    @Column(name = "rush_order")
+    private Boolean rushOrder;
 
-    @Column(name = "rush_instruction")
+    // Sửa: Dùng kiểu LocalTime cho cột time
+    @Column(name = "rush_time", columnDefinition = "time without time zone")
+    private LocalTime rushTime;
+
+    @Column(name = "rush_instruction", columnDefinition = "TEXT")
     private String rushInstruction;
 
-    @Column(name = "delivery_fee")
-    private Double deliveryFee;
+    @Column(name = "delivery_fee", precision = 12, scale = 2)
+    private BigDecimal deliveryFee;
 
-    @Column(name = "vat_fee")
-    private Double vatFee;
+    @Column(name = "vat_fee", precision = 12, scale = 2)
+    private BigDecimal vatFee;
 
-    @Column(name = "total_price")
-    private Double totalPrice;
+    @Column(name = "total_price", precision = 12, scale = 2)
+    private BigDecimal totalPrice;
 
-    @Column(name = "final_amount")
-    private Double finalAmount;
+    @Column(name = "final_amount", precision = 12, scale = 2)
+    private BigDecimal finalAmount;
 
-    @Column(name = "status")
-    private String status; // 0: Chờ duyệt, 1: Đã duyệt, 2: Từ chối
+    @Column(name = "status", length = 5)
+    private String status;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", columnDefinition = "timestamp with time zone")
     private Timestamp createdAt;
 
-    @OneToMany(mappedBy = "order")
-    @JsonManagedReference
-    private List<OrderItem> orderItems;
+    // ================== GETTERS / SETTERS ==================
+    public Integer getOrderId() { return orderId; }
+    public void setOrderId(Integer orderId) { this.orderId = orderId; }
 
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    // Getters and Setters
-    public Long getOrderId() { return orderId; }
-    public void setOrderId(Long orderId) { this.orderId = orderId; }
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+
     public String getProvinceCity() { return provinceCity; }
     public void setProvinceCity(String provinceCity) { this.provinceCity = provinceCity; }
-    public Boolean getRush() { return rush; }
-    public void setRush(Boolean rush) { this.rush = rush; }
+
+    public Boolean getRushOrder() { return rushOrder; }
+    public void setRushOrder(Boolean rushOrder) { this.rushOrder = rushOrder; }
+
+    public LocalTime getRushTime() { return rushTime; }
+    public void setRushTime(LocalTime rushTime) { this.rushTime = rushTime; }
+
     public String getRushInstruction() { return rushInstruction; }
     public void setRushInstruction(String rushInstruction) { this.rushInstruction = rushInstruction; }
-    public Double getDeliveryFee() { return deliveryFee; }
-    public void setDeliveryFee(Double deliveryFee) { this.deliveryFee = deliveryFee; }
-    public Double getVatFee() { return vatFee; }
-    public void setVatFee(Double vatFee) { this.vatFee = vatFee; }
-    public Double getTotalPrice() { return totalPrice; }
-    public void setTotalPrice(Double totalPrice) { this.totalPrice = totalPrice; }
-    public Double getFinalAmount() { return finalAmount; }
-    public void setFinalAmount(Double finalAmount) { this.finalAmount = finalAmount; }
+
+    public BigDecimal getDeliveryFee() { return deliveryFee; }
+    public void setDeliveryFee(BigDecimal deliveryFee) { this.deliveryFee = deliveryFee; }
+
+    public BigDecimal getVatFee() { return vatFee; }
+    public void setVatFee(BigDecimal vatFee) { this.vatFee = vatFee; }
+
+    public BigDecimal getTotalPrice() { return totalPrice; }
+    public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
+
+    public BigDecimal getFinalAmount() { return finalAmount; }
+    public void setFinalAmount(BigDecimal finalAmount) { this.finalAmount = finalAmount; }
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
-    public List<OrderItem> getOrderItems() { return orderItems; }
-    public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }
 }

@@ -52,6 +52,7 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!formData.title || !formData.category || !formData.barcode || !formData.value || !formData.price || !formData.quantity) {
       alert('Vui lòng điền tất cả các trường bắt buộc!');
       return;
@@ -73,10 +74,11 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
         created_by: formData.created_by ? parseInt(formData.created_by) : null
       };
 
+      // ✅ Tính thay đổi giá nếu có
       const oldPrice = parseFloat(product.retailPrice.replace('đ', '').replace(/,/g, ''));
       const newPrice = parseFloat(formData.price);
       let priceChange = null;
-      if (oldPrice !== newPrice) {
+      if (!isNaN(oldPrice) && oldPrice !== newPrice) {
         const change = ((newPrice - oldPrice) / oldPrice * 100).toFixed(1) + '%';
         const changeType = newPrice > oldPrice ? 'positive' : 'negative';
         priceChange = {
@@ -84,19 +86,21 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
           oldPrice: product.retailPrice,
           newPrice: `${newPrice.toLocaleString()}đ`,
           change: `${changeType === 'positive' ? '+' : ''}${change}`,
-          changeType
+          changeType,
+          timestamp: new Date().toISOString()
         };
       }
 
       await axios.put(`http://localhost:8080/api/products/${product.id}`, updatedProduct, {
         headers: { 'Content-Type': 'application/json' }
       });
+
       if (onProductUpdated) onProductUpdated(priceChange);
       alert('Sản phẩm đã được lưu thành công!');
       onClose();
     } catch (error) {
       console.error('Lỗi khi cập nhật sản phẩm:', error.response?.data || error.message);
-      alert('Không thể cập nhật sản phẩm. Vui lòng thử lại. Chi tiết: ' + (error.response?.data?.message || error.message));
+      alert('Không thể cập nhật sản phẩm. Vui lòng thử lại.');
     }
   };
 

@@ -16,7 +16,7 @@ const OutOfStock = ({ data }) => {
                 <item.icon className="w-4 h-4 text-orange-600" />
               </div>
               <div>
-                <p className="font-medium text-gray-800">{item.name}</p>
+                <p className="font-medium text-gray-800">{item.title}</p>
                 <p className="text-sm text-gray-600">{item.type}</p>
               </div>
             </div>

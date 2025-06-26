@@ -22,21 +22,25 @@ const ProductManagement = ({ onPriceChange }) => {
   const fetchProducts = async () => {
     try {
       const res = await axios.get('http://localhost:8080/api/products');
-      const mappedProducts = res.data.map((p) => ({
-        id: p.productId || p.id || Date.now() + Math.random(),
-        name: p.title,
-        type: p.category,
-        priceBeforeVAT: `${p.value?.toLocaleString?.() ?? 'N/A'}đ`,
-        retailPrice: `${p.price?.toLocaleString?.() ?? 'N/A'}đ`,
-        quantity: p.quantity ?? 0,
-        lastUpdated: p.entryDate ? new Date(p.entryDate).toLocaleDateString() : new Date().toLocaleDateString(),
-        typeColor: getColorByCategory(p.category),
-        description: p.description || '',
-        barcode: p.barcode || '',
-        dimension: p.dimension || '',
-        weight: p.weight || '',
-        created_by: p.created_by || ''
-      }));
+      const mappedProducts = res.data.map((p) => {
+        const value = p.value ?? 0;
+        const retailPrice = value * 1.1;
+        return {
+          id: p.productId || p.id || Date.now() + Math.random(),
+          name: p.title,
+          type: p.category,
+          priceBeforeVAT: `${value.toLocaleString()}đ`,
+          retailPrice: `${retailPrice.toLocaleString()}đ`,
+          quantity: p.quantity ?? 0,
+          lastUpdated: p.entryDate ? new Date(p.entryDate).toLocaleDateString() : new Date().toLocaleDateString(),
+          typeColor: getColorByCategory(p.category),
+          description: p.description || '',
+          barcode: p.barcode || '',
+          dimension: p.dimension || '',
+          weight: p.weight || '',
+          created_by: p.created_by || ''
+        };
+      });
       setProducts(mappedProducts);
       console.log('Fetched products:', mappedProducts);
     } catch (err) {
@@ -71,12 +75,15 @@ const ProductManagement = ({ onPriceChange }) => {
   };
 
   const handleProductAdded = (newProduct) => {
+    const value = newProduct.value ?? 0;
+    const retailPrice = value * 1.1;
+
     setProducts([...products, {
       id: newProduct.productId || Date.now() + Math.random(),
       name: newProduct.title,
       type: newProduct.category,
-      priceBeforeVAT: `${newProduct.value?.toLocaleString?.() ?? 'N/A'}đ`,
-      retailPrice: `${newProduct.price?.toLocaleString?.() ?? 'N/A'}đ`,
+      priceBeforeVAT: `${value.toLocaleString()}đ`,
+      retailPrice: `${retailPrice.toLocaleString()}đ`,
       quantity: newProduct.quantity ?? 0,
       lastUpdated: newProduct.entry_date ? new Date(newProduct.entry_date).toLocaleDateString() : new Date().toLocaleDateString(),
       typeColor: getColorByCategory(newProduct.category),
