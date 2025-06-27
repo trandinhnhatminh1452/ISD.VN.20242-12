@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import "./updateProfile.scss";
+import './updateProfile.scss';
 
 const UpdateProfile = () => {
-  const { user, setUser } = useAuth();
-  const navigate = useNavigate();
+  const { user,setUser } = useAuth();
+  const navigate = useNavigate();  
 
   const [formData, setFormData] = useState({
     username: user?.username || "",
@@ -29,7 +29,7 @@ const UpdateProfile = () => {
         phone: formData.phone,
         password: formData.password || user.password, // ✅ dùng mật khẩu cũ nếu không nhập mới
       };
-
+  
       const res = await fetch(`http://localhost:8080/api/user/${user.id}`, {
         method: "PUT",
         headers: {
@@ -38,7 +38,7 @@ const UpdateProfile = () => {
         credentials: "include",
         body: JSON.stringify(updatedData),
       });
-
+  
       if (res.ok) {
         const updatedUser = await res.json();
         localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -53,6 +53,7 @@ const UpdateProfile = () => {
       alert("Có lỗi xảy ra");
     }
   };
+  
 
   return (
     <div className="update-profile-container">
@@ -65,7 +66,11 @@ const UpdateProfile = () => {
           onChange={handleChange}
         />
         <label>Số điện thoại</label>
-        <input name="phone" value={formData.phone} onChange={handleChange} />
+        <input
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+        />
         <label>Mật khẩu mới</label>
         <input
           name="password"

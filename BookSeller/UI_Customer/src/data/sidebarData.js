@@ -22,7 +22,7 @@ export const sidebarItems = [
   {
     name: 'Đăng xuất',
     icon: null,
-    page: 'logout',
+    action: 'logout',
     active: () => false
   }
 ];

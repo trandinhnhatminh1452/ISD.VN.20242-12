@@ -11,6 +11,7 @@ import vn.aims.BookSeller.Entity.Role;
 import vn.aims.BookSeller.Entity.User;
 import vn.aims.BookSeller.Repository.RoleRepo;
 import vn.aims.BookSeller.Repository.UserRepo;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,7 +24,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RoleService roleService;
 
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
 
@@ -62,14 +64,21 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User updateUser(int id, UserUpdateRequest u){
-        User user =getUser(id);
+public User updateUser(int id, UserUpdateRequest u) {
+    User user = getUser(id);
 
-        user.setPassword(u.getPassword());
-        user.setUsername(u.getUsername());
-        user.setPhone(u.getPhone());
-        return userRepo.save(user);
+    // Cập nhật thông tin
+    user.setUsername(u.getUsername());
+    user.setPhone(u.getPhone());
+
+    // Nếu người dùng nhập mật khẩu mới thì mới encode
+    if (u.getPassword() != null && !u.getPassword().isEmpty()) {
+        user.setPassword(passwordEncoder.encode(u.getPassword()));
     }
+
+    return userRepo.save(user);
+}
+
 
     public User getUser(Integer id){
         return userRepo.findById(id).orElseThrow(()->new RuntimeException("User not found"));

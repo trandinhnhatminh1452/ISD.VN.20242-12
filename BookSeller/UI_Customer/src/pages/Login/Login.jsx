@@ -49,16 +49,14 @@ const Login = () => {
 
             if (res.ok) {
               localStorage.setItem("user", JSON.stringify(userData));
+              login(userData);
 
               const roles = userData.roles || [];
-              const roleNames = roles.map((role) => role.name);
 
-              console.log("Đăng nhập với vai trò:", roleNames);
-
-              // 👉 Điều hướng theo vai trò
-              if (roleNames.includes("ROLE_ADMIN")) {
-        
-                window.location.replace("http://localhost:5173");
+              console.log("Đăng nhập với vai trò:", roles);
+              if (roles.includes("ROLE_ADMIN")) {
+      
+                navigate("/manage");
               } else {
                 navigate("/");
                 window.location.reload();
