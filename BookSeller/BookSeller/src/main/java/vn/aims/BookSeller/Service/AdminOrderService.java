@@ -23,8 +23,8 @@ public class AdminOrderService {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        if ("0".equals(order.getStatus())) { // Trạng thái: Chờ duyệt
-            order.setStatus("1"); // Đã duyệt
+        if ("CREATED".equals(order.getStatus())) { // Trạng thái: Chờ duyệt
+            order.setStatus("APPROVED"); // Đã duyệt
 
             if (order.getRushTime() == null) {
                 order.setRushTime(LocalTime.of(14, 0)); // Giao gấp mặc định
@@ -42,8 +42,8 @@ public class AdminOrderService {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        if ("0".equals(order.getStatus())) {
-            order.setStatus("2"); // Đã từ chối
+        if ("CREATED".equals(order.getStatus())) {
+            order.setStatus("REJECTED"); // Đã từ chối
             orderRepo.save(order);
             return;
         }
