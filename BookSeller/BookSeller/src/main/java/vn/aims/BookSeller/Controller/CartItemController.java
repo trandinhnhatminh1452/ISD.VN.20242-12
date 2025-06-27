@@ -33,7 +33,7 @@ public class CartItemController {
         // Truy xuất user và cart
         User user = userService.findByUsername(username);
         Cart cart = user.getCart();
-         cartitemservice.createCartItem(request.getProduct_id(),cart.getCartId(),request.getQuantity());
+         cartitemservice.createCartItem(request.getProduct_id(),request.getCart_id(),request.getQuantity());
     }
     @PostMapping("/cartitem1")
     public void deleteCartItem(@RequestBody CartItemRequest request){
@@ -41,9 +41,9 @@ public class CartItemController {
         String username = authentication.getName();
 
         // Truy xuất user và cart
-        User user = userService.findByUsername(username);
-        Cart cart = user.getCart();
-        cartitemservice.deleteCartItem(request.getProduct_id(),cart.getCartId());
+        // User user = userService.findByUsername(username);
+        // Cart cart = user.getCart();
+        cartitemservice.deleteCartItem(request.getProduct_id(),request.getCart_id());
     }
     @PostMapping("/cartitem2")
     public void decreaseCartItem(@RequestBody CartItemRequest request){
@@ -51,9 +51,9 @@ public class CartItemController {
         String username = authentication.getName();
 
         // Truy xuất user và cart
-        User user = userService.findByUsername(username);
-        Cart cart = user.getCart();
-        cartitemservice.decreaseCartItem(request.getProduct_id(),cart.getCartId());
+        // User user = userService.findByUsername(username);
+        // Cart cart = user.getCart();
+        cartitemservice.decreaseCartItem(request.getProduct_id(),request.getCart_id());
     }
     @PostMapping("/cartitem3")
     public void increaseCartItem(@RequestBody CartItemRequest request){
@@ -61,9 +61,9 @@ public class CartItemController {
         String username = authentication.getName();
 
         // Truy xuất user và cart
-        User user = userService.findByUsername(username);
-        Cart cart = user.getCart();
-        cartitemservice.increaseCartItem(request.getProduct_id(),cart.getCartId());
+        // User user = userService.findByUsername(username);
+        // Cart cart = user.getCart();
+        cartitemservice.increaseCartItem(request.getCart_id(),request.getProduct_id());
     }
 
     

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import lombok.Data;
@@ -20,31 +21,76 @@ import lombok.NoArgsConstructor;
 
 @RestController
 @RequestMapping("/api/admin/order")
-@CrossOrigin(origins = "http://localhost:3000,http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AdminOrderController {
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class OrderDTO {
-        private Integer orderId;
-        private String status;
-        private BigDecimal finalAmount;
-        private java.time.LocalDateTime createdAt;
-        private String name;
-        private String email;
-        private List<OrderItemDTO> items;
+    private Integer orderId;
+    private String status;
+    private BigDecimal finalAmount;
+    private LocalDateTime createdAt;
+    private String name;
+    private String email;
+    private List<OrderItemDTO> items;
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
     }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setFinalAmount(BigDecimal finalAmount) {
+        this.finalAmount = finalAmount;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setItems(List<OrderItemDTO> items) {
+        this.items = items;
+    }
+}
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class OrderItemDTO {
-        private Integer productId;
-        private String productName;
-        private Integer quantity;
-        private BigDecimal price;
+    private Integer productId;
+    private Integer quantity;
+    private BigDecimal price;
+    private String productName;
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
     }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+}
+
 
     private static final Logger logger = LoggerFactory.getLogger(AdminOrderController.class);
 
