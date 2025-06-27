@@ -65,8 +65,8 @@ public class Product {
     private Integer createdBy;
 
     // ✅ Thêm trường image
-    @Column(name = "image")
-    private String image;
+//    @Column(name = "image")
+//    private String image;
 
     // --- GETTER & SETTER ---
 
@@ -199,11 +199,11 @@ public class Product {
     }
 
     // ✅ Getter & Setter cho image
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
+//    public String getImage() {
+//        return image;
+//    }
+//
+//    public void setImage(String image) {
+//        this.image = image;
+//    }
 }
