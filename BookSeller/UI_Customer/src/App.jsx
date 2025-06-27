@@ -23,7 +23,6 @@ import Transactions from "./pages/Transactions/Transactions.jsx";
 import InvoiceDetail from "./pages/InvoiceDetail/InvoiceDetail.jsx";
 import Layout from "./components/common/Layout.jsx";
 import UpdateProfile from "./pages/Profile/updateProfile.jsx";
-
 function App() {
   return (
     <Router>
@@ -33,28 +32,28 @@ function App() {
             <Routes>
               {/* Group route cần layout KHÁCH */}
               <Route
-                path="/"
+                path="/*"
                 element={
                   <>
                     <Navbar />
                     <Routes>
-                      <Route index element={<Home />} />
-                      <Route path="about" element={<About />} />
-                      <Route path="products" element={<Products />} />
-                      <Route path="cart" element={<Cart />} />
-                      <Route path="product/:bookId" element={<ProductDetail />} />
-                      <Route path="contact" element={<Contact />} />
-                      <Route path="support" element={<Support />} />
-                      <Route path="customer-support/order-guide" element={<OrderGuide />} />
-                      <Route path="customer-support/shipping-guide" element={<ShippingGuide />} />
-                      <Route path="customer-support/payment-guide" element={<PaymentGuide />} />
-                      <Route path="login" element={<Login />} />
-                      <Route path="register" element={<Register />} />
-                      <Route path="profile" element={<Profile />} />
-                      <Route path="transactions" element={<Transactions />} />
-                      <Route path="payment" element={<Payment />} />
-                      <Route path="invoice/:id" element={<InvoiceDetail />} />
-                      <Route path="update-profile" element={<UpdateProfile />} />
+                      <Route path="/" element={<Home />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/products" element={<Products />} />
+                      <Route path="/cart" element={<Cart />} />
+                      <Route path="/product/:bookId" element={<ProductDetail />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/support" element={<Support />} />
+                      <Route path="/customer-support/order-guide" element={<OrderGuide />} />
+                      <Route path="/customer-support/shipping-guide" element={<ShippingGuide />} />
+                      <Route path="/customer-support/payment-guide" element={<PaymentGuide />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/transactions" element={<Transactions />} />
+                      <Route path="/payment" element={<Payment />} />
+                      <Route path="/invoice/:id" element={<InvoiceDetail />} />
+                      <Route path="/update-profile" element={<UpdateProfile />} />
                     </Routes>
                     <Footer />
                   </>
@@ -62,7 +61,7 @@ function App() {
               />
 
               {/* Route tách riêng layout */}
-              <Route path="manage" element={<Layout />} />
+              <Route path="/manage" element={<Layout />} />
             </Routes>
           </SearchProvider>
         </CartProvider>
