@@ -20,15 +20,21 @@ const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
     }
     setLoading(true);
     try {
-      const url = `http://localhost:8080/api/admin/orders/${order.orderId}/approve`;
+      const url = `http://localhost:8080/api/admin/order/${order.orderId}/approve`;
       console.log('Sending Approve Request to:', url);
 
-      const response = await fetch(url, { method: 'PUT' });
+      const response = await fetch(url, {
+        method: 'PUT',
+        credentials: 'include', // Thêm credentials để xử lý cookie
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
+      const data = await response.json();
       if (!response.ok) {
-        const text = await response.text();
-        console.error('API Response:', text);
-        throw new Error(`Failed to approve order: ${text || response.statusText}`);
+        console.error('API Response:', data);
+        throw new Error(data.error || `Failed to approve order: ${response.statusText}`);
       }
 
       alert('Đơn hàng đã được duyệt!');
@@ -49,15 +55,21 @@ const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
     }
     setLoading(true);
     try {
-      const url = `http://localhost:8080/api/admin/orders/${order.orderId}/cancel`;
+      const url = `http://localhost:8080/api/admin/order/${order.orderId}/cancel`;
       console.log('Sending Reject Request to:', url);
 
-      const response = await fetch(url, { method: 'PUT' });
+      const response = await fetch(url, {
+        method: 'PUT',
+        credentials: 'include', // Thêm credentials để xử lý cookie
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
+      const data = await response.json();
       if (!response.ok) {
-        const text = await response.text();
-        console.error('API Response:', text);
-        throw new Error(`Failed to reject order: ${text || response.statusText}`);
+        console.error('API Response:', data);
+        throw new Error(data.error || `Failed to reject order: ${response.statusText}`);
       }
 
       alert('Đơn hàng đã bị từ chối!');

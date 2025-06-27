@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import vn.aims.BookSeller.DTO.request.AuthorizationRequest;
 import vn.aims.BookSeller.DTO.request.UserCreationDTO;
+import vn.aims.BookSeller.DTO.request.UserDTO;
 import vn.aims.BookSeller.DTO.request.UserUpdateRequest;
 import vn.aims.BookSeller.Entity.Cart;
 import vn.aims.BookSeller.Entity.Role;
@@ -128,8 +129,8 @@ public ResponseEntity<?> getCurrentUser(Principal principal) {
         return ResponseEntity.status(404).body("Không tìm thấy người dùng");
     }
 
-    return ResponseEntity.ok(user);
-
+    return ResponseEntity.ok(new UserDTO(user)); 
 }
+
 
 }

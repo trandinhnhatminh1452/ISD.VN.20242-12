@@ -9,7 +9,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/order")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000,http://localhost:5173")
 public class OrderController {
     @Autowired
     private OrderService orderService;
@@ -22,7 +22,7 @@ public class OrderController {
     }
 
     @GetMapping("/invoice/{orderId}")
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "http://localhost:3000,http://localhost:5173")
     public ResponseEntity<?> getInvoiceByOrderId(@PathVariable Integer orderId) {
         Map<String, Object> invoice = orderService.getInvoiceFromOrder(orderId);
         if (invoice == null) return ResponseEntity.notFound().build();
@@ -30,7 +30,7 @@ public class OrderController {
     }
 
     @GetMapping("/transactions/{userId}")
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "http://localhost:3000,http://localhost:5173")
     public ResponseEntity<?> getTransactionHistory(@PathVariable Integer userId) {
         return ResponseEntity.ok(orderService.getTransactionHistory(userId));
     }

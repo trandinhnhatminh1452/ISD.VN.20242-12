@@ -91,7 +91,7 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
         };
       }
 
-      await axios.put(`http://localhost:8080/api/products/${product.id}`, updatedProduct, {
+      await axios.put(`http://localhost:8080/api/product/${product.id}`, updatedProduct, {
         headers: { 'Content-Type': 'application/json' }
       });
 

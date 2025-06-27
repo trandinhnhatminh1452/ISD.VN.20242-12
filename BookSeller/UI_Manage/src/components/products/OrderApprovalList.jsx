@@ -13,14 +13,29 @@ const OrderApprovalList = () => {
     const fetchPendingOrders = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:8080/api/admin/orders', {
+        const response = await axios.get('http://localhost:8080/api/admin/order', {
           headers: { 'Content-Type': 'application/json' },
+          withCredentials: true, // Thêm với vớiCredentials để xử lý cookie
         });
-        if (response.data.error) throw new Error(response.data.error || 'Lỗi từ server');
-        if (!Array.isArray(response.data)) throw new Error('Dữ liệu trả về không phải là danh sách đơn hàng');
-        const filtered = response.data.filter(order => order.status === '0');
-        console.log('Fetched Orders:', filtered); // Debug dữ liệu
-        setPendingOrders(filtered);
+
+        // Log response để debug
+        console.log('API Response:', {
+          status: response.status,
+          data: response.data
+        });
+
+        // Xử lý dữ liệu
+        if (response.status !== 200) {
+          throw new Error(`API error: ${response.statusText}`);
+        }
+
+        const orders = Array.isArray(response.data) ? response.data : [];
+        // Filter orders with status 'pending' or 'CREATED'
+        const pending = orders.filter(order => 
+          order.status === 'pending' || order.status === 'CREATED'
+        );
+        console.log('Pending Orders:', pending);
+        setPendingOrders(pending);
       } catch (err) {
         setError(err.message || 'Đã xảy ra lỗi khi tải dữ liệu');
         console.error('Fetch Error:', err.response?.data || err);
@@ -33,18 +48,20 @@ const OrderApprovalList = () => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case '0': return 'Chờ duyệt';
-      case '1': return 'Đã duyệt';
-      case '2': return 'Từ chối';
-      default: return 'Không rõ';
+      case 'pending': return 'Chờ duyệt';
+      case 'CREATED': return 'Chờ duyệt';
+      case 'approved': return 'Đã duyệt';
+      case 'canceled': return 'Từ chối';
+      default: return status || 'Không rõ';
     }
   };
 
   const getStatusClass = (status) => {
     switch (status) {
-      case '0': return 'bg-yellow-100 text-yellow-800';
-      case '1': return 'bg-green-100 text-green-800';
-      case '2': return 'bg-red-100 text-red-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'CREATED': return 'bg-yellow-100 text-yellow-800';
+      case 'approved': return 'bg-green-100 text-green-800';
+      case 'canceled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };

@@ -44,7 +44,7 @@ import React, { useState } from 'react';
           created_by: formData.created_by ? parseInt(formData.created_by) : null
         };
 
-        const response = await axios.post('http://localhost:8080/api/products', productData, {
+        const response = await axios.post('http://localhost:8080/api/product', productData, {
           headers: { 'Content-Type': 'application/json' }
         });
         console.log('Phản hồi từ server:', response.data);

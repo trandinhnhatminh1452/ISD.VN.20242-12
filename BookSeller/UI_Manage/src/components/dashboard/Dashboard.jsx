@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import StatsCard from './StatsCard';
-import PriceChanges from './PriceChanges';
-import OutOfStock from './OutOfStock';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import StatsCard from "./StatsCard";
+import PriceChanges from "./PriceChanges";
+import OutOfStock from "./OutOfStock";
+import axios from "axios";
 import {
   Package,
   AlertTriangle,
@@ -10,8 +10,8 @@ import {
   DollarSign,
   Book,
   Disc,
-  Film
-} from 'lucide-react';
+  Film,
+} from "lucide-react";
 
 const Dashboard = () => {
   const [stats, setStats] = useState([]);
@@ -25,7 +25,7 @@ const Dashboard = () => {
       Book: Book,
       CD: Disc,
       LP: Disc,
-      DVD: Film
+      DVD: Film,
     };
     return icons[type] || Package;
   };
@@ -34,60 +34,82 @@ const Dashboard = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        // Gọi API với xử lý lỗi chi tiết
         const [productRes, orderRes] = await Promise.all([
-          axios.get('http://localhost:8080/api/products '),
-          axios.get('http://localhost:8080/api/admin/orders')
+          axios.get("http://localhost:8080/api/product", {
+            withCredentials: true,
+          }),
+          axios.get("http://localhost:8080/api/admin/order", {
+            withCredentials: true,
+          }),
         ]);
 
-        const productData = productRes.data || [];
-        const orders = orderRes.data || [];
+        // Log để debug
+        console.log('Response từ API:', {
+          productStatus: productRes.status,
+          productData: productRes.data,
+          orderStatus: orderRes.status,
+          orderData: orderRes.data
+        });
 
-        const pendingOrdersCount = orders.filter(order => order.status === '0').length;
+        // Xử lý dữ liệu
+        const productData = Array.isArray(productRes.data) ? productRes.data : [];
+        const orders = Array.isArray(orderRes.data) ? orderRes.data : [];
+
+        // Log sau khi xử lý
+        console.log('Dữ liệu sau khi xử lý:', {
+          products: productData,
+          orders: orders
+        });
+
+        const pendingOrdersCount = orders.filter(
+          (order) => order.status === "0"
+        ).length;
 
         setProducts(productData);
 
         setStats([
           {
-            title: 'Tổng số sản phẩm',
+            title: "Tổng số sản phẩm",
             value: productData.length.toString(),
             icon: Package,
-            color: 'orange'
+            color: "orange",
           },
           {
-            title: 'Sắp hết hàng',
-            value: productData.filter(p => p.quantity < 5).length.toString(),
+            title: "Sắp hết hàng",
+            value: productData.filter((p) => p.quantity < 5).length.toString(),
             icon: AlertTriangle,
-            color: 'orange'
+            color: "orange",
           },
           {
-            title: 'Đơn chờ duyệt',
+            title: "Đơn chờ duyệt",
             value: pendingOrdersCount.toString(),
-            changeType: 'positive',
+            changeType: "positive",
             icon: ClipboardList,
-            color: 'orange'
+            color: "orange",
           },
           {
-            title: 'Doanh thu hôm nay',
-            value: 'đ2,450,000',
-            change: '+8% so với tháng trước',
-            changeType: 'positive',
+            title: "Doanh thu hôm nay",
+            value: "đ2,450,000",
+            change: "+8% so với tháng trước",
+            changeType: "positive",
             icon: DollarSign,
-            color: 'orange'
-          }
+            color: "orange",
+          },
         ]);
 
         const lowStockItems = productData
-          .filter(p => p.quantity < 5)
-          .map(p => ({
-            title: p.name || p.title || '[Không rõ tên]',
-            type: p.type || p.category || '[Không rõ loại]',
+          .filter((p) => p.quantity < 5)
+          .map((p) => ({
+            title: p.name || p.title || "[Không rõ tên]",
+            type: p.type || p.category || "[Không rõ loại]",
             remaining: `Còn ${p.quantity}`,
-            icon: getIconByType(p.type || p.category)
+            icon: getIconByType(p.type || p.category),
           }));
 
         setOutOfStock(lowStockItems);
       } catch (error) {
-        console.error('Lỗi khi tải dữ liệu:', error.message);
+        console.error("Lỗi khi tải dữ liệu:", error.message);
         setStats([]);
         setOutOfStock([]);
       } finally {
@@ -100,11 +122,14 @@ const Dashboard = () => {
 
   const handlePriceChange = (priceChange) => {
     if (priceChange) {
-      setPriceChanges(prev => [priceChange, ...prev].slice(0, 3));
+      setPriceChanges((prev) => [priceChange, ...prev].slice(0, 3));
     }
   };
 
-  if (loading) return <div className="p-6 text-center text-gray-600">Đang tải dữ liệu...</div>;
+  if (loading)
+    return (
+      <div className="p-6 text-center text-gray-600">Đang tải dữ liệu...</div>
+    );
 
   return (
     <>

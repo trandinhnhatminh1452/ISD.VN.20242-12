@@ -16,7 +16,7 @@ const ProductCard = ({ book }) => {
   console.log("🪪 productId trong ProductCard:", book.productId);
 
   const { addToCart } = useCart();
-    const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
 
   const price = book.price || 999999;
@@ -24,7 +24,6 @@ const ProductCard = ({ book }) => {
   const image = book.image
     ? `http://localhost:8080/image/${book.image}`
     : "/default-book-cover.jpg";
-
 
   const { user } = useAuth();
 
@@ -36,7 +35,12 @@ const ProductCard = ({ book }) => {
     }
 
     try {
-      addToCart({ ...book, id: book.productId || book.id, productId: book.productId || book.id, quantity });
+      addToCart({
+        ...book,
+        id: book.productId || book.id,
+        productId: book.productId || book.id,
+        quantity,
+      });
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       alert("Có lỗi khi thêm vào giỏ hàng. Vui lòng thử lại.");
@@ -44,23 +48,26 @@ const ProductCard = ({ book }) => {
   };
 
   return (
-    <div className="book-card">
-      <Link to={`/product/${book.productId}`}>
-        <img src={image} alt={title} />
-      </Link>
-      <div className="book-details">
+    console.log("🖼️ Book object:", book),
+    (
+      <div className="book-card">
         <Link to={`/product/${book.productId}`}>
-          <h3>{title}</h3>
+          <img src={image} alt={title} />
         </Link>
+        <div className="book-details">
+          <Link to={`/product/${book.productId}`}>
+            <h3>{title}</h3>
+          </Link>
 
-        <div className="price-cart">
-          <p className="price">{formatPrice(price)} VND</p>
-          <button className="add-to-cart" onClick={handleAddToCart}>
-            <FaCartPlus />
-          </button>
+          <div className="price-cart">
+            <p className="price">{formatPrice(price)} VND</p>
+            <button className="add-to-cart" onClick={handleAddToCart}>
+              <FaCartPlus />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    )
   );
 };
 

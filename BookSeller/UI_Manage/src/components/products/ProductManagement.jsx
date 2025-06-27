@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import ProductFilters from './ProductFilter';
-import ProductTable from './ProductTable';
-import AddProductForm from './AddProductForm';
-import EditProductForm from './EditProductForm';
-import axios from 'axios';
-import { useProductSelection } from '../../hooks/useProductSelection';
-import { getColorByCategory } from '../../utils/helpers';
+import React, { useState, useEffect } from "react";
+import ProductFilters from "./ProductFilter";
+import ProductTable from "./ProductTable";
+import AddProductForm from "./AddProductForm";
+import EditProductForm from "./EditProductForm";
+import axios from "axios";
+import { useProductSelection } from "../../hooks/useProductSelection";
+import { getColorByCategory } from "../../utils/helpers";
 
 const ProductManagement = ({ onPriceChange }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [category, setCategory] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState("");
   const [products, setProducts] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -21,7 +21,7 @@ const ProductManagement = ({ onPriceChange }) => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:8080/api/products');
+      const res = await axios.get("http://localhost:8080/api/product");
       const mappedProducts = res.data.map((p) => {
         const value = p.value ?? 0;
         const retailPrice = value * 1.1;
@@ -32,44 +32,49 @@ const ProductManagement = ({ onPriceChange }) => {
           priceBeforeVAT: `${value.toLocaleString()}đ`,
           retailPrice: `${retailPrice.toLocaleString()}đ`,
           quantity: p.quantity ?? 0,
-          lastUpdated: p.entryDate ? new Date(p.entryDate).toLocaleDateString() : new Date().toLocaleDateString(),
+          lastUpdated: p.entryDate
+            ? new Date(p.entryDate).toLocaleDateString()
+            : new Date().toLocaleDateString(),
           typeColor: getColorByCategory(p.category),
-          description: p.description || '',
-          barcode: p.barcode || '',
-          dimension: p.dimension || '',
-          weight: p.weight || '',
-          created_by: p.created_by || ''
+          description: p.description || "",
+          barcode: p.barcode || "",
+          dimension: p.dimension || "",
+          weight: p.weight || "",
+          created_by: p.created_by || "",
         };
       });
       setProducts(mappedProducts);
-      console.log('Fetched products:', mappedProducts);
+      console.log("Fetched products:", mappedProducts);
     } catch (err) {
-      console.error('Lỗi khi tải sản phẩm:', err);
+      console.error("Lỗi khi tải sản phẩm:", err);
     }
   };
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm === '';
-    const matchesCategory = category === '' || product.type === category;
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      searchTerm === "";
+    const matchesCategory = category === "" || product.type === category;
     return matchesSearch && matchesCategory;
   });
 
-  const { selectAll, selectedProducts, handleSelectAll, handleSelectProduct } = useProductSelection(filteredProducts);
+  const { selectAll, selectedProducts, handleSelectAll, handleSelectProduct } =
+    useProductSelection(filteredProducts);
 
   const handleDeleteProduct = async (productId) => {
     if (!productId) {
-      console.error('productId không hợp lệ:', productId);
-      alert('ID sản phẩm không hợp lệ.');
+      console.error("productId không hợp lệ:", productId);
+      alert("ID sản phẩm không hợp lệ.");
       return;
     }
-    if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
       try {
-        await axios.delete(`http://localhost:8080/api/products/${productId}`);
+        await axios.delete(`http://localhost:8080/api/product/${productId}`);
         await fetchProducts();
-        alert('Xóa sản phẩm thành công!');
+        alert("Xóa sản phẩm thành công!");
       } catch (error) {
-        console.error('Lỗi khi xóa sản phẩm:', error);
-        alert('Không thể xóa sản phẩm. Vui lòng thử lại.');
+        console.error("Lỗi khi xóa sản phẩm:", error);
+        alert("Không thể xóa sản phẩm. Vui lòng thử lại.");
       }
     }
   };
@@ -78,21 +83,26 @@ const ProductManagement = ({ onPriceChange }) => {
     const value = newProduct.value ?? 0;
     const retailPrice = value * 1.1;
 
-    setProducts([...products, {
-      id: newProduct.productId || Date.now() + Math.random(),
-      name: newProduct.title,
-      type: newProduct.category,
-      priceBeforeVAT: `${value.toLocaleString()}đ`,
-      retailPrice: `${retailPrice.toLocaleString()}đ`,
-      quantity: newProduct.quantity ?? 0,
-      lastUpdated: newProduct.entry_date ? new Date(newProduct.entry_date).toLocaleDateString() : new Date().toLocaleDateString(),
-      typeColor: getColorByCategory(newProduct.category),
-      description: newProduct.description || '',
-      barcode: newProduct.barcode || '',
-      dimension: newProduct.dimension || '',
-      weight: newProduct.weight || '',
-      created_by: newProduct.created_by || ''
-    }]);
+    setProducts([
+      ...products,
+      {
+        id: newProduct.productId || Date.now() + Math.random(),
+        name: newProduct.title,
+        type: newProduct.category,
+        priceBeforeVAT: `${value.toLocaleString()}đ`,
+        retailPrice: `${retailPrice.toLocaleString()}đ`,
+        quantity: newProduct.quantity ?? 0,
+        lastUpdated: newProduct.entry_date
+          ? new Date(newProduct.entry_date).toLocaleDateString()
+          : new Date().toLocaleDateString(),
+        typeColor: getColorByCategory(newProduct.category),
+        description: newProduct.description || "",
+        barcode: newProduct.barcode || "",
+        dimension: newProduct.dimension || "",
+        weight: newProduct.weight || "",
+        created_by: newProduct.created_by || "",
+      },
+    ]);
     setShowAddForm(false);
   };
 
@@ -119,7 +129,7 @@ const ProductManagement = ({ onPriceChange }) => {
         handleSelectProduct={handleSelectProduct}
         handleDelete={handleDeleteProduct}
         onEdit={(product) => {
-          console.log('Selected product for edit:', product);
+          console.log("Selected product for edit:", product);
           setSelectedProduct(product);
           setShowEditForm(true);
         }}
