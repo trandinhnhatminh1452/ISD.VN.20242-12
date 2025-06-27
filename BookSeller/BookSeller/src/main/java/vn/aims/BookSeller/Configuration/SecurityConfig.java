@@ -21,7 +21,8 @@ public class SecurityConfig {
 //    public JdbcUserDetailsManager jdbcUserDetailsManager(DataSource db){
 //        return new JdbcUserDetailsManager(db);
 //    }
-
+    @Autowired
+    private CustomAuthenticationSuccessHandler successHandler;
 
 
     @Bean
@@ -43,16 +44,18 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests(
                         configurer->configurer
-//                                .requestMatchers("/home1").permitAll()
+                                .requestMatchers("api/login").permitAll()
+                                .requestMatchers("/api/admin").hasAnyRole("ADMIN")
+                                .requestMatchers("/api/user").hasAnyRole("USER")
                                 .anyRequest().permitAll()
+                )
+                .formLogin(
+                        form->form.loginPage("/api/login").loginProcessingUrl("/authenticateTheUser").successHandler(successHandler).permitAll()
+                ).logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/api/login")  // chuyển hướng tới đây sau khi logout
+                        .permitAll()
                 );
-//                .formLogin(
-//                        form->form.loginPage("/Bluemoon/login").loginProcessingUrl("/authenticateTheUser").permitAll().defaultSuccessUrl("/Bluemoon/dashboard", true)
-//                ).logout(logout -> logout
-//                        .logoutUrl("/logout")
-//                        .logoutSuccessUrl("/Bluemoon/home1")  // chuyển hướng tới đây sau khi logout
-//                        .permitAll()
-//                );
 
         http.csrf(csrf->csrf.disable());
         return http.build();

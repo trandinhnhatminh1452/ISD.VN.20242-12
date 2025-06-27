@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login Page</title>
+
+    <!-- Bootstrap -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-wrapper {
+            display: flex;
+            flex-direction: row;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .logo-side {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 40px;
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-side img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .form-side {
+            padding: 40px;
+            width: 50%;
+        }
+
+        .form-side h3 {
+            color: #1e3a8a;
+            margin-bottom: 25px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #1e3a8a;
+        }
+
+        .form-control {
+            height: 45px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .btn-login {
+            width: 100%;
+            background-color: #1e3a8a;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: #1e40af;
+        }
+
+        .text-danger {
+            font-size: 14px;
+            text-align: center;
+            background-color: #fef2f2;
+            padding: 10px;
+            border: 1px solid #fee2e2;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background-color: #1e3a8a;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="login-wrapper">
+    <!-- Logo bên trái -->
+    <div class="logo-side">
+        <img th:src="@{/static/logo.png}" alt="Bluemoon Logo">
+    </div>
+
+    <!-- Form đăng nhập bên phải -->
+    <div class="form-side">
+        <h3>Đăng nhập hệ thống</h3>
+        <form th:action="@{/authenticateTheUser}" method="POST">
+            <div class="mb-3 row">
+                <label for="username" class="col-sm-4 col-form-label">Tên đăng nhập</label>
+                <div class="col-sm-8">
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="password" class="col-sm-4 col-form-label">Mật khẩu</label>
+                <div class="col-sm-8">
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+            </div>
+
+            <div th:if="${param.error}" class="text-danger">
+                <span >Tên đăng nhập hoặc mật khẩu không đúng!</span>
+            </div>
+            <button type="submit" class="btn btn-login" >Đăng nhập</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <p th:text="#{footer.copyright}">&copy; 2025 Bluemoon Apartment Management. Thiết kế bởi Nhóm 20 KTPM-HUST.</p>
+</footer>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
