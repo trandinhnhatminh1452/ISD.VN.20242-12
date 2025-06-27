@@ -37,7 +37,7 @@ public class OrderService {
         order.setVatFee(toBigDecimal(orderData.get("vatFee")));
         order.setTotalPrice(toBigDecimal(orderData.get("totalPrice")));
         order.setFinalAmount(toBigDecimal(orderData.get("finalAmount")));
-        order.setStatus((String) orderData.getOrDefault("status", "0")); // mặc định là chờ duyệt
+        order.setStatus("CREATED"); 
         order.setCreatedAt(LocalDateTime.now());
 
         if (orderData.get("userId") != null) {
@@ -139,7 +139,7 @@ public class OrderService {
         transaction.setAmount(order.getFinalAmount());
         transaction.setContent("Phương thức thanh toán: " + orderData.get("paymentMethod"));
         transaction.setDatetime(now);
-        transaction.setStatus("completed");
+        transaction.setStatus("CREATED"); 
 
         paymentTransactionRepo.save(transaction);
     }
@@ -157,12 +157,18 @@ public class OrderService {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        if ("0".equals(order.getStatus())) {
-            order.setStatus("1"); // Đã duyệt
+        if ("CREATED".equals(order.getStatus())) {
+            order.setStatus("APPROVED"); 
             if (order.getRushTime() == null) {
                 order.setRushTime(LocalTime.of(14, 0));
             }
             orderRepo.save(order);
+            // Đồng bộ trạng thái payment_transaction
+            PaymentTransaction tx = paymentTransactionRepo.findByOrderId(orderId);
+            if (tx != null) {
+                tx.setStatus("APPROVED");
+                paymentTransactionRepo.save(tx);
+            }
         } else {
             throw new RuntimeException("Order cannot be approved because it is not in pending state");
         }
@@ -172,9 +178,15 @@ public class OrderService {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        if ("0".equals(order.getStatus())) {
-            order.setStatus("2"); // Đã từ chối
+        if ("CREATED".equals(order.getStatus())) {
+            order.setStatus("REJECTED"); 
             orderRepo.save(order);
+            // Đồng bộ trạng thái payment_transaction
+            PaymentTransaction tx = paymentTransactionRepo.findByOrderId(orderId);
+            if (tx != null) {
+                tx.setStatus("REJECTED");
+                paymentTransactionRepo.save(tx);
+            }
         } else {
             throw new RuntimeException("Order cannot be canceled because it is not in pending state");
         }
