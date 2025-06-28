@@ -1,9 +1,11 @@
 package vn.aims.BookSeller.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import java.sql.Timestamp;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "\"order\"")
@@ -14,7 +16,7 @@ public class Order {
     @Column(name = "order_id")
     private Integer orderId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Thường user không cần thiết phải EAGER
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -36,7 +38,6 @@ public class Order {
     @Column(name = "rush_order")
     private Boolean rushOrder;
 
-    // Sửa: Dùng kiểu LocalTime cho cột time
     @Column(name = "rush_time", columnDefinition = "time without time zone")
     private LocalTime rushTime;
 
@@ -59,9 +60,13 @@ public class Order {
     private String status;
 
     @Column(name = "created_at", columnDefinition = "timestamp with time zone")
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
-    // ================== GETTERS / SETTERS ==================
+    // Mối quan hệ với OrderItem
+    @JsonManagedReference
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<OrderItem> items;
+
     public Integer getOrderId() { return orderId; }
     public void setOrderId(Integer orderId) { this.orderId = orderId; }
 
@@ -107,6 +112,9 @@ public class Order {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public Timestamp getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getCreatedAt() { return createdAt; } // <-- Getter cho LocalDateTime
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; } // <-- Setter cho LocalDateTime
+
+    public List<OrderItem> getItems() { return items; }
+    public void setItems(List<OrderItem> items) { this.items = items; }
 }

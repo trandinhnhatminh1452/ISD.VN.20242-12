@@ -1,5 +1,6 @@
 package vn.aims.BookSeller.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference; // <-- Thêm import này
 import jakarta.persistence.*;
 
 @Entity
@@ -10,11 +11,12 @@ public class OrderItem {
     @Column(name = "order_item_id")
     private Integer orderItemId;
 
-    @ManyToOne
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
     private Product product;
 

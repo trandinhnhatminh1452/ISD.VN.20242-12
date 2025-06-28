@@ -26,22 +26,22 @@ public class Product {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @NotBlank(message = "Barcode is mandatory")
+    @NotBlank(message = "barcode is mandatory") // Sửa tên cột nếu cần
     @Column(name = "barcode", length = 100, nullable = false)
     private String barcode;
 
     @NotNull(message = "Value is mandatory")
     @Column(name = "value", precision = 12, scale = 2, nullable = false)
-    private BigDecimal value;
+    private BigDecimal value; // Giá trị gốc của sản phẩm
 
     @NotNull(message = "Price is mandatory")
     @Min(value = 0, message = "Price must be greater than or equal to 0")
     @Column(name = "price", precision = 12, scale = 2, nullable = false)
-    private BigDecimal price;
+    private BigDecimal price; // Giá bán hiện tại của sản phẩm
 
     @NotNull(message = "Quantity is mandatory")
     @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    private Integer quantity; // Số lượng tồn kho
 
     @Column(name = "entry_date")
     private LocalDate entryDate;
@@ -56,7 +56,7 @@ public class Product {
     private Integer createdBy;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     // Constructors
@@ -97,4 +97,7 @@ public class Product {
     public void setWeight(Double weight) { this.weight = weight; }
     public Integer getCreatedBy() { return createdBy; }
     public void setCreatedBy(Integer createdBy) { this.createdBy = createdBy; }
+
+    public List<OrderItem> getOrderItems() { return orderItems; }
+    public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }
 }
