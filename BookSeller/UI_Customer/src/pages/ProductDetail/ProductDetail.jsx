@@ -82,7 +82,7 @@ const ProductDetail = () => {
     });
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!user) {
       alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
       navigate("/login");
@@ -90,10 +90,14 @@ const ProductDetail = () => {
     }
 
     try {
-      addToCart({ ...book, id: book.productId || book.id, productId: book.productId || book.id, quantity });
+      await addToCart({
+        productId: book.productId || book.id,
+        quantity: quantity,
+      });
+      alert("Đã thêm vào giỏ hàng!");
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      alert("Có lỗi khi thêm vào giỏ hàng. Vui lòng thử lại.");
+      alert("Không thể thêm sản phẩm. Vui lòng thử lại.");
     }
   };
 
@@ -217,7 +221,6 @@ const ProductDetail = () => {
             {book.description || "Không có mô tả"}
           </div>
         </div>
-
 
         <div className="recommended-section">
           {book && (

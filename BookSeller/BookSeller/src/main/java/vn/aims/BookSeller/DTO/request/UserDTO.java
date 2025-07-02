@@ -12,6 +12,7 @@ public class UserDTO {
     private String email;
     private String phone;
     private Set<String> roles;
+    private Integer cartId; 
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -21,6 +22,10 @@ public class UserDTO {
         this.roles = user.getRoles().stream()
                 .map(Role::getName)
                 .collect(Collectors.toSet());
+
+        if (user.getCart() != null) {
+            this.cartId = user.getCart().getCartId();
+        }
     }
 
     // Getters
@@ -39,4 +44,5 @@ public class UserDTO {
     public Set<String> getRoles() {
         return roles;
     }
+    public Integer getCartId() { return cartId; } // ✅ Getter cho cartId
 }

@@ -27,7 +27,7 @@ const ProductCard = ({ book }) => {
 
   const { user } = useAuth();
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!user) {
       alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
       navigate("/login");
@@ -35,8 +35,7 @@ const ProductCard = ({ book }) => {
     }
 
     try {
-      addToCart({
-        ...book,
+      await addToCart({
         id: book.productId || book.id,
         productId: book.productId || book.id,
         quantity,

@@ -4,13 +4,39 @@ import { ChevronLeft, CheckCircle, XCircle } from "lucide-react";
 const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
-    if (!order || !order.orderId) {
-      setError("Dữ liệu đơn hàng không hợp lệ");
-      console.error("Invalid order data:", order);
-    }
-    setLoading(false);
+    const fetchOrderDetails = async () => {
+      if (!order || !order.orderId) {
+        setError("Dữ liệu đơn hàng không hợp lệ");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `http://localhost:8080/api/admin/order/${order.orderId}`,
+          {
+            credentials: "include",
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error("Không thể tải chi tiết đơn hàng");
+        }
+
+        const data = await res.json();
+        setOrderDetails(data);
+      } catch (err) {
+        console.error("Fetch order details error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
   }, [order]);
 
   const handleApprove = async () => {
@@ -21,29 +47,25 @@ const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
     setLoading(true);
     try {
       const url = `http://localhost:8080/api/admin/order/${order.orderId}/approve`;
-      console.log("Sending Approve Request to:", url);
 
       const response = await fetch(url, {
         method: "PUT",
-        credentials: "include", // Thêm credentials để xử lý cookie
-        headers: {
-          "Content-Type": "application/json",
-        },
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
       });
 
       const text = await response.text();
 
       if (!response.ok) {
-        console.error("API Response:", text);
         throw new Error(
           text || `Failed to approve order: ${response.statusText}`
         );
       }
+
       alert("Đơn hàng đã được duyệt!");
       onStatusUpdate(order.orderId, "APPROVED", "Order approved");
       onBack();
     } catch (err) {
-      console.error("Approve Error:", err);
       alert("Lỗi khi duyệt đơn hàng: " + err.message);
     } finally {
       setLoading(false);
@@ -58,22 +80,18 @@ const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
     setLoading(true);
     try {
       const url = `http://localhost:8080/api/admin/order/${order.orderId}/cancel`;
-      console.log("Sending Reject Request to:", url);
 
       const response = await fetch(url, {
         method: "PUT",
-        credentials: "include", // Thêm credentials để xử lý cookie
-        headers: {
-          "Content-Type": "application/json",
-        },
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
       });
 
       const text = await response.text();
 
       if (!response.ok) {
-        console.error("API Response:", text);
         throw new Error(
-          text || `Failed to approve order: ${response.statusText}`
+          text || `Failed to reject order: ${response.statusText}`
         );
       }
 
@@ -81,7 +99,6 @@ const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
       onStatusUpdate(order.orderId, "REJECTED", "Order rejected");
       onBack();
     } catch (err) {
-      console.error("Reject Error:", err);
       alert("Lỗi khi từ chối đơn hàng: " + err.message);
     } finally {
       setLoading(false);
@@ -92,16 +109,17 @@ const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
     return <div className="p-6 text-center text-gray-600">Đang xử lý...</div>;
   if (error)
     return <div className="p-6 text-center text-red-600">Lỗi: {error}</div>;
-  if (!order)
+  if (!orderDetails)
     return (
       <div className="p-6 text-center text-gray-600">
         Không có dữ liệu đơn hàng
       </div>
     );
 
-  const items = Array.isArray(order.items) ? order.items : [];
-  const subtotal = order.final_amount ? order.final_amount * 0.9 : 0;
-  const vat = order.final_amount ? order.final_amount - subtotal : 0;
+  const items = Array.isArray(orderDetails.items) ? orderDetails.items : [];
+  const subtotal = orderDetails.subtotal || 0;
+  const vat = orderDetails.vatFee || 0;
+  const total = orderDetails.totalAmount || 0;
 
   return (
     <div className="p-6 bg-white shadow-sm rounded-lg">
@@ -113,7 +131,7 @@ const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h2 className="text-2xl font-bold text-gray-800">
-          Chi tiết đơn hàng #{order.orderId}
+          Chi tiết đơn hàng #{orderDetails.orderId}
         </h2>
       </div>
 
@@ -124,7 +142,7 @@ const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
             items.map((item, index) => (
               <div key={index} className="mb-4 p-4 bg-gray-50 rounded-lg">
                 <p className="font-medium text-gray-800">
-                  {item.product_name || "Không có tên sản phẩm"}
+                  {item.productName || "Không có tên sản phẩm"}
                 </p>
                 <p className="text-gray-600">Số lượng: {item.quantity || 0}</p>
                 <p className="text-gray-600">
@@ -138,14 +156,9 @@ const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
             </div>
           )}
           <div className="mt-4">
-            <p className="text-gray-800">
-              Tổng phụ: {subtotal.toLocaleString("vi-VN")}đ
-            </p>
-            <p className="text-gray-800">
-              VAT (10%): {vat.toLocaleString("vi-VN")}đ
-            </p>
             <p className="text-gray-800 font-bold">
-              Tổng cộng: {(order.final_amount || 0).toLocaleString("vi-VN")}đ
+              Tổng cộng (Đã cộng VAT):{" "}
+              {orderDetails.paidAmount?.toLocaleString("vi-VN") || "0"}đ
             </p>
           </div>
         </div>
@@ -153,33 +166,36 @@ const OrderApprovalDetails = ({ order, onBack, onStatusUpdate }) => {
         <div>
           <h3 className="text-lg font-semibold mb-4">Thông tin khách hàng</h3>
           <p>
-            <strong>Tên khách hàng:</strong> {order.name || "Không có tên"}
+            <strong>Tên khách hàng:</strong>{" "}
+            {orderDetails.name || "Không có tên"}
           </p>
           <p>
-            <strong>Số điện thoại:</strong> {order.phone || "Không có số"}
+            <strong>Số điện thoại:</strong>{" "}
+            {orderDetails.phone || "Không có số"}
           </p>
           <p>
-            <strong>Email:</strong> {order.email || "Không có email"}
+            <strong>Email:</strong> {orderDetails.email || "Không có email"}
           </p>
           <p>
-            <strong>Địa chỉ hàng:</strong> {order.address || "Không có địa chỉ"}
+            <strong>Địa chỉ hàng:</strong>{" "}
+            {orderDetails.address || "Không có địa chỉ"}
           </p>
 
           <h3 className="text-lg font-semibold mt-6 mb-4">
             Thông tin đơn hàng
           </h3>
           <p>
-            <strong>Ngày đặt hàng:</strong> {formatDate(order.created_at)}
+            <strong>Ngày đặt hàng:</strong> {formatDate(orderDetails.createdAt)}
+          </p>
+
+          <p>
+            <strong>{orderDetails.paymentMethod || "Chưa cập nhật"}</strong>{" "}
           </p>
           <p>
-            <strong>Phương thức thanh toán:</strong>{" "}
-            {order.payment_method || "Chưa cập nhật"}
+            <strong>Trạng thái:</strong> {getStatusText(orderDetails.status)}
           </p>
           <p>
-            <strong>Trạng thái:</strong> {getStatusText(order.status)}
-          </p>
-          <p>
-            <strong>Chú ý:</strong> {order.note || "Không có"}
+            <strong>Chú ý:</strong> {orderDetails.note || "Không có"}
           </p>
         </div>
       </div>

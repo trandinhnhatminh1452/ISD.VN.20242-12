@@ -7,7 +7,6 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
 
   const handleItemClick = (item) => {
     if (item.action === "logout") {
-      // 👉 Gọi API logout nếu cần
       fetch("http://localhost:8080/logout", {
         method: "POST",
         credentials: "include",

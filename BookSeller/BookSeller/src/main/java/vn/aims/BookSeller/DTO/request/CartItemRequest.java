@@ -4,27 +4,27 @@ import jakarta.validation.constraints.NotNull;
 
 public class CartItemRequest {
     @NotNull
-    private int product_id;
-    private int cart_id;
-    private int quantity;
+    private Integer product_id;
+    private Integer cart_id;
+    private Integer quantity;
 
-    public int getProduct_id() {
+    public Integer getProduct_id() {
         return product_id;
     }
 
-    public void setProduct_id(int product_id) {
+    public void setProduct_id(Integer product_id) {
         this.product_id = product_id;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
-    public int getCart_id() {
+    public Integer getCart_id() {
         return cart_id;
     }
 

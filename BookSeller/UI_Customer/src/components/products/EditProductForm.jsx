@@ -1,60 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const EditProductForm = ({ product, onClose, onProductUpdated }) => {
   const [formData, setFormData] = useState({
-    title: product.name || '',
-    category: product.type || '',
-    description: product.description || '',
-    barcode: product.barcode || '',
-    value: product.priceBeforeVAT.replace('đ', '').replace(/,/g, '') || '',
-    price: product.retailPrice.replace('đ', '').replace(/,/g, '') || '',
-    quantity: product.quantity || '',
-    entry_date: '',
-    dimension: product.dimension || '',
-    weight: product.weight || '',
-    created_by: product.created_by || ''
+    title: product.name || "",
+    category: product.type || "",
+    description: product.description || "",
+    barcode: product.barcode || "",
+    value: product.priceBeforeVAT.replace("đ", "").replace(/,/g, "") || "",
+    price: product.retailPrice.replace("đ", "").replace(/,/g, "") || "",
+    quantity: product.quantity || "",
+    entry_date: "",
+    dimension: product.dimension || "",
+    weight: product.weight || "",
+    created_by: product.created_by || "",
   });
 
   useEffect(() => {
-    let entryDateValue = '';
-    if (product.lastUpdated && product.lastUpdated !== 'N/A') {
+    let entryDateValue = "";
+    if (product.lastUpdated && product.lastUpdated !== "N/A") {
       try {
-        const [day, month, year] = product.lastUpdated.split('/');
-        entryDateValue = new Date(`${year}-${month}-${day}`).toISOString().split('T')[0];
+        const [day, month, year] = product.lastUpdated.split("/");
+        entryDateValue = new Date(`${year}-${month}-${day}`)
+          .toISOString()
+          .split("T")[0];
       } catch (e) {
-        console.error('Lỗi parse ngày:', product.lastUpdated, e);
-        entryDateValue = new Date().toISOString().split('T')[0];
+        console.error("Lỗi parse ngày:", product.lastUpdated, e);
+        entryDateValue = new Date().toISOString().split("T")[0];
       }
     } else {
-      entryDateValue = new Date().toISOString().split('T')[0];
+      entryDateValue = new Date().toISOString().split("T")[0];
     }
 
     setFormData({
-      title: product.name || '',
-      category: product.type || '',
-      description: product.description || '',
-      barcode: product.barcode || '',
-      value: product.priceBeforeVAT.replace('đ', '').replace(/,/g, '') || '',
-      price: product.retailPrice.replace('đ', '').replace(/,/g, '') || '',
-      quantity: product.quantity || '',
+      title: product.name || "",
+      category: product.type || "",
+      description: product.description || "",
+      barcode: product.barcode || "",
+      value: product.priceBeforeVAT.replace("đ", "").replace(/,/g, "") || "",
+      price: product.retailPrice.replace("đ", "").replace(/,/g, "") || "",
+      quantity: product.quantity || "",
       entry_date: entryDateValue,
-      dimension: product.dimension || '',
-      weight: product.weight || '',
-      created_by: product.created_by || ''
+      dimension: product.dimension || "",
+      weight: product.weight || "",
+      created_by: product.created_by || "",
     });
   }, [product]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.category || !formData.barcode || !formData.value || !formData.price || !formData.quantity) {
-      alert('Vui lòng điền tất cả các trường bắt buộc!');
+    if (
+      !formData.title ||
+      !formData.category ||
+      !formData.barcode ||
+      !formData.value ||
+      !formData.price ||
+      !formData.quantity
+    ) {
+      alert("Vui lòng điền tất cả các trường bắt buộc!");
       return;
     }
 
@@ -71,45 +80,58 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
         entry_date: formData.entry_date || null,
         dimension: formData.dimension.trim() || null,
         weight: formData.weight ? parseFloat(formData.weight) : null,
-        created_by: formData.created_by ? parseInt(formData.created_by) : null
+        created_by: formData.created_by ? parseInt(formData.created_by) : null,
       };
 
-      // ✅ Tính thay đổi giá nếu có
-      const oldPrice = parseFloat(product.retailPrice.replace('đ', '').replace(/,/g, ''));
+      const oldPrice = parseFloat(
+        product.retailPrice.replace("đ", "").replace(/,/g, "")
+      );
       const newPrice = parseFloat(formData.price);
       let priceChange = null;
       if (!isNaN(oldPrice) && oldPrice !== newPrice) {
-        const change = ((newPrice - oldPrice) / oldPrice * 100).toFixed(1) + '%';
-        const changeType = newPrice > oldPrice ? 'positive' : 'negative';
+        const change =
+          (((newPrice - oldPrice) / oldPrice) * 100).toFixed(1) + "%";
+        const changeType = newPrice > oldPrice ? "positive" : "negative";
         priceChange = {
           name: product.name,
           oldPrice: product.retailPrice,
           newPrice: `${newPrice.toLocaleString()}đ`,
-          change: `${changeType === 'positive' ? '+' : ''}${change}`,
+          change: `${changeType === "positive" ? "+" : ""}${change}`,
           changeType,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
-      await axios.put(`http://localhost:8080/api/product/${product.id}`, updatedProduct, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      await axios.put(
+        `http://localhost:8080/api/product/${product.id}`,
+        updatedProduct,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (onProductUpdated) onProductUpdated(priceChange);
-      alert('Sản phẩm đã được lưu thành công!');
+      alert("Sản phẩm đã được lưu thành công!");
       onClose();
     } catch (error) {
-      console.error('Lỗi khi cập nhật sản phẩm:', error.response?.data || error.message);
-      alert('Không thể cập nhật sản phẩm. Vui lòng thử lại.');
+      console.error(
+        "Lỗi khi cập nhật sản phẩm:",
+        error.response?.data || error.message
+      );
+      alert("Không thể cập nhật sản phẩm. Vui lòng thử lại.");
     }
   };
 
   return (
     <div className="p-6">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">Sửa thông tin sản phẩm</h3>
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        Sửa thông tin sản phẩm
+      </h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Tên sản phẩm *</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Tên sản phẩm *
+          </label>
           <input
             type="text"
             name="title"
@@ -120,7 +142,9 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Loại sản phẩm *</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Loại sản phẩm *
+          </label>
           <select
             name="category"
             value={formData.category}
@@ -136,7 +160,9 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Mô tả</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Mô tả
+          </label>
           <input
             type="text"
             name="description"
@@ -146,7 +172,9 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Nhập barcode *</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Nhập barcode *
+          </label>
           <input
             type="text"
             name="barcode"
@@ -156,8 +184,10 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
             required
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Giá nhập kho (VNĐ) *</label>
+        {/* <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Giá nhập kho (VNĐ) *
+          </label>
           <input
             type="number"
             name="value"
@@ -167,9 +197,11 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
             step="0.01"
             required
           />
-        </div>
+        </div> */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Giá bán (VNĐ) *</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Giá bán (VNĐ) *
+          </label>
           <input
             type="number"
             name="price"
@@ -181,7 +213,9 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Số lượng *</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Số lượng *
+          </label>
           <input
             type="number"
             name="quantity"
@@ -192,7 +226,9 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Ngày nhập kho</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Ngày nhập kho
+          </label>
           <input
             type="date"
             name="entry_date"
@@ -202,7 +238,9 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Kích thước (cm)</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Kích thước (cm)
+          </label>
           <input
             type="text"
             name="dimension"
@@ -212,7 +250,9 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Khối lượng (g)</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Khối lượng (g)
+          </label>
           <input
             type="number"
             name="weight"
@@ -223,7 +263,9 @@ const EditProductForm = ({ product, onClose, onProductUpdated }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Created by</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Created by
+          </label>
           <input
             type="number"
             name="created_by"

@@ -19,6 +19,10 @@ public class AdminOrderService {
     @Autowired
     private PaymentTransactionRepo paymentTransactionRepo;
 
+public PaymentTransaction getPaymentTransactionByOrderId(Integer orderId) {
+    return paymentTransactionRepo.findByOrderId(orderId);
+}
+
     public List<Order> findAllOrders() {
         return orderRepo.findAll();
     }

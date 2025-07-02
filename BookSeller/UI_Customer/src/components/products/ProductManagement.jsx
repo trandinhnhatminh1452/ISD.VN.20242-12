@@ -23,13 +23,13 @@ const ProductManagement = ({ onPriceChange }) => {
     try {
       const res = await axios.get("http://localhost:8080/api/product");
       const mappedProducts = res.data.map((p) => {
-        const value = p.value ?? 0;
-        const retailPrice = value * 1.1;
+        const price = p.price ?? 0;
+        const retailPrice = price * 1.1;
         return {
           id: p.productId || p.id || Date.now() + Math.random(),
           name: p.title,
           type: p.category,
-          priceBeforeVAT: `${value.toLocaleString()}đ`,
+          priceBeforeVAT: `${price.toLocaleString()}đ`,
           retailPrice: `${retailPrice.toLocaleString()}đ`,
           quantity: p.quantity ?? 0,
           lastUpdated: p.entryDate
@@ -80,8 +80,8 @@ const ProductManagement = ({ onPriceChange }) => {
   };
 
   const handleProductAdded = (newProduct) => {
-    const value = newProduct.value ?? 0;
-    const retailPrice = value * 1.1;
+    const price = newProduct.price ?? 0;
+    const retailPrice = price * 1.1;
 
     setProducts([
       ...products,
@@ -89,7 +89,7 @@ const ProductManagement = ({ onPriceChange }) => {
         id: newProduct.productId || Date.now() + Math.random(),
         name: newProduct.title,
         type: newProduct.category,
-        priceBeforeVAT: `${value.toLocaleString()}đ`,
+        priceBeforeVAT: `${price.toLocaleString()}đ`,
         retailPrice: `${retailPrice.toLocaleString()}đ`,
         quantity: newProduct.quantity ?? 0,
         lastUpdated: newProduct.entry_date

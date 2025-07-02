@@ -66,7 +66,7 @@ public class Order {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
 
     public Integer getOrderId() { return orderId; }
@@ -118,8 +118,9 @@ public class Order {
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public void setOrderItems(List<OrderItem> orderItems) {
-    }
-    public OrderItem[] getOrderItems() {
-        return new OrderItem[0];
+    this.orderItems = orderItems;
+}
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
     }
 }

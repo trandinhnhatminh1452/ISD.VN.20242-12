@@ -1,71 +1,110 @@
 // src/context/CartContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useAuth } from "./AuthContext"; // Lấy thông tin người dùng
+import { useAuth } from "./AuthContext";
+import axios from "axios";
 
 const CartContext = createContext();
-
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  const { user } = useAuth(); // Lấy user hiện tại
+  const { user } = useAuth();
   const [cart, setCart] = useState([]);
 
-  // Load giỏ hàng từ localStorage khi user thay đổi
   useEffect(() => {
-    if (user && user.id) {
-      const storedCart = localStorage.getItem(`cart_${user.id}`);
-      if (storedCart) {
-        setCart(JSON.parse(storedCart));
+    const fetchCart = async () => {
+      if (user?.cart?.cartId) {
+        try {
+          const res = await axios.get(`/api/cartitem/${user.cart.cartId}`);
+          setCart(res.data);
+        } catch (err) {
+          console.error("Lỗi khi tải giỏ hàng:", err);
+        }
       } else {
-        setCart([]); // reset giỏ hàng nếu user chưa có
+        setCart([]);
       }
-    }
+    };
+    fetchCart();
   }, [user]);
 
-  // Lưu giỏ hàng vào localStorage mỗi khi giỏ hàng thay đổi
-  useEffect(() => {
-    if (user && user.id) {
-      localStorage.setItem(`cart_${user.id}`, JSON.stringify(cart));
+  //  Thêm sản phẩm
+  const addToCart = async (product) => {
+    try {
+      const productId = product.productId || product.id || product.idProduct;
+      const quantity = product.quantity || 1;
+
+      console.log("Sending to API:", {
+        product_id: productId,
+        cart_id: user?.cart?.cartId,
+        quantity,
+      });
+
+      await axios.post("/api/cartitem/cartitem", {
+        product_id: productId,
+        cart_id: user.cart.cartId,
+        quantity,
+      });
+
+      // Reload lại cart
+      const res = await axios.get(`/api/cartitem/${user.cart.cartId}`);
+      setCart(res.data);
+    } catch (err) {
+      console.error("Lỗi khi thêm sản phẩm:", err);
     }
-  }, [cart, user]);
-
-  // Thêm sản phẩm
-  const addToCart = (product) => {
-    const normalizedProductId =
-      product.productId || product.id || product.idProduct;
-
-    if (!normalizedProductId) {
-      console.warn("❌ Không thể thêm sản phẩm không có productId hợp lệ:", product);
-    return;
-  }
-
-  const normalizedProduct = {
-    ...product,
-    productId: normalizedProductId, // Đảm bảo productId tồn tại
   };
 
-  setCart((prevCart) => {
-    const index = prevCart.findIndex(
-      (item) => item.productId === normalizedProduct.productId
-    );
-    if (index !== -1) {
-      const updated = [...prevCart];
-      updated[index].quantity += normalizedProduct.quantity;
-      return updated;
-    } else {
-      return [...prevCart, normalizedProduct];
+  //  Xóa sản phẩm
+  const removeFromCart = async (productId) => {
+    try {
+      await axios.post("/api/cartitem/cartitem1", {
+        product_id: productId,
+        cart_id: user.cart.cartId,
+      });
+      const res = await axios.get(`/api/cartitem/${user.cart.cartId}`);
+      setCart(res.data);
+    } catch (err) {
+      console.error("Lỗi khi xóa sản phẩm:", err);
     }
-  });
-};
+  };
 
+  //  Giảm số lượng
+  const decreaseItem = async (productId) => {
+    try {
+      await axios.post("/api/cartitem/cartitem2", {
+        product_id: productId,
+        cart_id: user.cart.cartId,
+      });
+      const res = await axios.get(`/api/cartitem/${user.cart.cartId}`);
+      setCart(res.data);
+    } catch (err) {
+      console.error("Lỗi khi giảm số lượng:", err);
+    }
+  };
 
-  // Xóa sản phẩm
-  const removeFromCart = (productId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.productId !== productId));
+  //  Tăng số lượng
+  const increaseItem = async (productId) => {
+    try {
+      await axios.post("/api/cartitem/cartitem3", {
+        product_id: productId,
+        cart_id: user.cart.cartId,
+      });
+      const res = await axios.get(`/api/cartitem/${user.cart.cartId}`);
+      setCart(res.data);
+    } catch (err) {
+      console.error("Lỗi khi tăng số lượng:", err);
+    }
   };
 
   return (
-    <CartContext.Provider value={{ cart, setCart, addToCart, removeFromCart }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        setCart,
+        addToCart,
+        removeFromCart,
+        decreaseItem,
+        increaseItem,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

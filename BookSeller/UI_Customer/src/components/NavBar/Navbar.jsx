@@ -62,7 +62,7 @@ const Navbar = () => {
         )}&page=0&size=5`
       );
       const data = await response.json();
-      setSuggestions(data.content || []); // data là một mảng sản phẩm
+      setSuggestions(data.content || []);
       setShowSuggestions(true);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
@@ -79,9 +79,7 @@ const Navbar = () => {
 
   return (
     <nav>
-      <div className="search-results" ref={searchResultsRef}>
-        {/* Phần này sẽ được cuộn đến khi tìm kiếm */}
-      </div>
+      <div className="search-results" ref={searchResultsRef}></div>
       <div className="navbar-left">
         <div className="shop">
           <Link to="/">
@@ -188,7 +186,9 @@ const Navbar = () => {
                   <Link to="/profile" className="menu-item">
                     Tài Khoản
                   </Link>
-                  <Link to="/transactions" className="menu-item">Giao dịch</Link>
+                  <Link to="/transactions" className="menu-item">
+                    Giao dịch
+                  </Link>
                   <div
                     onClick={logout}
                     className="menu-item"
