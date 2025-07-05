@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -51,6 +52,16 @@ public class UserController {
 //
 //        return ResponseEntity.ok("Registered successfully. Please check your email!");
 //    }
+
+@GetMapping("/all")
+public ResponseEntity<List<UserDTO>> getAllUsers() {
+    List<User> users = userRepo.findAll();
+    List<UserDTO> userDTOs = users.stream()
+                                  .map(UserDTO::new)
+                                  .collect(Collectors.toList());
+    return ResponseEntity.ok(userDTOs);
+}
+
 
 LocalDateTime localDateTime = LocalDateTime.now();
 Timestamp timestamp = Timestamp.valueOf(localDateTime);
@@ -131,6 +142,17 @@ public ResponseEntity<?> getCurrentUser(Principal principal) {
 
     return ResponseEntity.ok(new UserDTO(user)); 
 }
+
+@DeleteMapping("/{id}")
+public ResponseEntity<?> deleteUser(@PathVariable int id) {
+    if (!userRepo.existsById(id)) {
+        return ResponseEntity.status(404).body("Người dùng không tồn tại");
+    }
+
+    userRepo.deleteById(id);
+    return ResponseEntity.ok("Xoá người dùng thành công");
+}
+
 
 
 }

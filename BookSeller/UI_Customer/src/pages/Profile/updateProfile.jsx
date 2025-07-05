@@ -27,7 +27,7 @@ const UpdateProfile = () => {
       const updatedData = {
         username: formData.username,
         phone: formData.phone,
-        password: formData.password || user.password, // ✅ dùng mật khẩu cũ nếu không nhập mới
+        password: formData.password || user.password, 
       };
   
       const res = await fetch(`http://localhost:8080/api/user/${user.id}`, {

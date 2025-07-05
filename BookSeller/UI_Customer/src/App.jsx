@@ -31,7 +31,6 @@ function App() {
         <CartProvider>
           <SearchProvider>
             <Routes>
-              {/* Group route cần layout KHÁCH */}
               <Route
                 path="/*"
                 element={
@@ -62,7 +61,6 @@ function App() {
                 }
               />
 
-              {/* Route tách riêng layout */}
               <Route path="/manage" element={<Layout />} />
             </Routes>
           </SearchProvider>

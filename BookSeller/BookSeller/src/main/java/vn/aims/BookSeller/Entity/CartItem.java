@@ -1,5 +1,7 @@
 package vn.aims.BookSeller.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -10,6 +12,7 @@ public class CartItem {
     @Id
     @ManyToOne
     @JoinColumn(name = "cart_id", referencedColumnName = "cart_id")
+    @JsonBackReference
     private Cart cart;
 
     public Cart getCart() {
