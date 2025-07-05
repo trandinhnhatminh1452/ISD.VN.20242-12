@@ -19,6 +19,7 @@ import { SearchProvider } from "./context/SearchContext.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import Payment from "./components/Payment/Payment.jsx";
+import VietQR from "./components/Payment/VietQR.jsx";
 import Transactions from "./pages/Transactions/Transactions.jsx";
 import InvoiceDetail from "./pages/InvoiceDetail/InvoiceDetail.jsx";
 import Layout from "./components/common/Layout.jsx";
@@ -52,6 +53,7 @@ function App() {
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/transactions" element={<Transactions />} />
                       <Route path="/payment" element={<Payment />} />
+                      <Route path="/vietqr" element={<VietQR />} />
                       <Route path="/invoice/:id" element={<InvoiceDetail />} />
                       <Route path="/update-profile" element={<UpdateProfile />} />
                     </Routes>

@@ -137,7 +137,19 @@ public class OrderService {
         transaction.setTransactionId(transactionId);
         transaction.setOrder(order);
         transaction.setAmount(order.getFinalAmount());
-        transaction.setContent("Phương thức thanh toán: " + orderData.get("paymentMethod"));
+        
+        // Xử lý nội dung thanh toán dựa trên phương thức
+        String paymentMethod = (String) orderData.get("paymentMethod");
+        String content;
+        if ("bank_transfer".equals(paymentMethod)) {
+            content = "Chuyển khoản qua VietQR - HOADON" + order.getOrderId();
+        } else if ("cod".equals(paymentMethod)) {
+            content = "Thanh toán khi nhận hàng (COD)";
+        } else {
+            content = "Phương thức thanh toán: " + paymentMethod;
+        }
+        
+        transaction.setContent(content);
         transaction.setDatetime(now);
         transaction.setStatus("CREATED"); 
 

@@ -1,0 +1,223 @@
+.vietqr-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vietqr-content {
+  width: 100%;
+  max-width: 800px;
+}
+
+.vietqr-card {
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.vietqr-header {
+  text-align: center;
+  padding: 20px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin: -24px -24px 0 -24px;
+}
+
+.qr-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 20px 0;
+}
+
+.qr-code-container {
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #dee2e6;
+}
+
+.qr-code-image {
+  width: 250px;
+  height: 250px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.qr-loading {
+  width: 250px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+}
+
+.qr-loading p {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+}
+
+
+
+.qr-instructions {
+  max-width: 500px;
+}
+
+.qr-instructions ol {
+  padding-left: 20px;
+  line-height: 1.8;
+}
+
+.qr-instructions li {
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.bank-info-section {
+  padding: 20px 0;
+}
+
+.bank-info-list {
+  width: 100%;
+}
+
+.bank-info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.bank-info-item .ant-typography {
+  margin: 0;
+}
+
+.amount-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1890ff;
+}
+
+.important-note {
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+}
+
+.note-text {
+  margin: 0;
+  color: #d46b08;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.complete-button {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  border: none;
+  height: 48px;
+  padding: 0 32px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+}
+
+.complete-button:hover {
+  background: linear-gradient(135deg, #389e0d 0%, #237804 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(82, 196, 26, 0.4);
+}
+
+.back-button {
+  height: 48px;
+  padding: 0 32px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 2px solid #d9d9d9;
+}
+
+.back-button:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .vietqr-container {
+    padding: 10px;
+  }
+  
+  .vietqr-content {
+    max-width: 100%;
+  }
+  
+  .qr-section {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .qr-code-image {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .bank-info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .complete-button,
+  .back-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .vietqr-header {
+    padding: 15px 0;
+  }
+  
+  .qr-icon {
+    font-size: 36px;
+  }
+  
+  .qr-code-image {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .bank-info-item {
+    padding: 10px 12px;
+  }
+} 

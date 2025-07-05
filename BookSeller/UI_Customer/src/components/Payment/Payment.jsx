@@ -61,10 +61,22 @@ const Payment = () => {
 
       console.log("Order data being sent:", orderData);
       const response = await orderAPI.createOrder(orderData);
-      message.success("Đặt hàng thành công!");
-      navigate(`/invoice/${response.orderId}`, {
-        state: { paymentMethod: paymentMethod },
-      });
+      
+      // Kiểm tra phương thức thanh toán
+      if (paymentMethod === 'bank_transfer') {
+        // Chuyển đến màn hình VietQR
+        navigate('/vietqr', { 
+          state: { 
+            orderData: orderData,
+            totalAmount: totalAmount,
+            orderId: response.orderId
+          } 
+        });
+      } else {
+        // Thanh toán COD - chuyển đến hóa đơn
+        message.success('Đặt hàng thành công!');
+        navigate(`/invoice/${response.orderId}`, { state: { paymentMethod: paymentMethod } });
+      }
     } catch (error) {
       console.error("Payment error:", error);
       message.error("Thanh toán thất bại. Vui lòng thử lại.");
@@ -218,7 +230,7 @@ const Payment = () => {
             <Form.Item name="payment_method" initialValue="cod">
               <Radio.Group onChange={(e) => setPaymentMethod(e.target.value)}>
                 <Radio value="cod">Thanh toán khi nhận hàng (COD)</Radio>
-                <Radio value="vnpay">Thanh toán qua VNPay</Radio>
+                <Radio value="bank_transfer">Chuyển khoản qua VietQR</Radio>
               </Radio.Group>
             </Form.Item>
           </div>
