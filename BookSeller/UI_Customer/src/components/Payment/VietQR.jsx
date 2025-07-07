@@ -11,8 +11,25 @@ const VietQR = () => {
   const location = useLocation();
   const [copiedField, setCopiedField] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState('');
+  const [totalAmount, setTotalAmount] = useState(0);
 
-  const { orderData, totalAmount, orderId } = location.state || {};
+  const { orderId } = location.state || {};
+
+  // Lấy tổng tiền từ backend
+  useEffect(() => {
+    const fetchInvoice = async () => {
+      if (!orderId) return;
+      try {
+        const res = await fetch(`http://localhost:8080/api/order/invoice/${orderId}`);
+        if (!res.ok) return;
+        const invoice = await res.json();
+        setTotalAmount(invoice.totalAmount || 0);
+      } catch (err) {
+        setTotalAmount(0);
+      }
+    };
+    fetchInvoice();
+  }, [orderId]);
 
   const bankInfo = {
     bankCode: 'MB', // viết tắt ngân hàng
@@ -28,7 +45,7 @@ const VietQR = () => {
       const qrURL = `https://img.vietqr.io/image/${bankInfo.bankCode}-${bankInfo.accountNumber}-compact.png?amount=${bankInfo.amount}&addInfo=${encodedContent}`;
       setQrCodeUrl(qrURL);
     }
-  }, [bankInfo]);
+  }, [bankInfo.accountNumber, bankInfo.amount, bankInfo.content]);
 
   const copyToClipboard = (text, field) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -43,7 +60,7 @@ const VietQR = () => {
     navigate(`/invoice/${orderId}`, { 
       state: { 
         paymentMethod: 'bank_transfer',
-        orderData: orderData 
+        orderId: orderId 
       } 
     });
   };

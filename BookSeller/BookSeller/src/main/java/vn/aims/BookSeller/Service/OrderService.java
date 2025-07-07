@@ -26,6 +26,17 @@ public class OrderService {
     @Autowired private PaymentTransactionRepo paymentTransactionRepo;
     @Autowired private UserRepo userRepo;
 
+    private BigDecimal calculateShippingFee(BigDecimal subtotal, String shippingType, String address) {
+        // Ví dụ: miễn phí nếu subtotal > 500.000đ
+        if (subtotal.compareTo(BigDecimal.valueOf(500000)) >= 0) {
+            return BigDecimal.ZERO;
+        }
+        if ("rush".equals(shippingType)) {
+            return BigDecimal.valueOf(100000);
+        }
+        return BigDecimal.valueOf(50000);
+    }
+
     public Integer createOrder(Map<String, Object> orderData) {
         Order order = new Order();
         order.setName((String) orderData.get("name"));
@@ -33,7 +44,6 @@ public class OrderService {
         order.setPhone((String) orderData.get("phone"));
         order.setAddress((String) orderData.get("address"));
         order.setProvinceCity((String) orderData.get("provinceCity"));
-        order.setDeliveryFee(toBigDecimal(orderData.get("deliveryFee")));
         order.setStatus("CREATED"); 
         order.setCreatedAt(LocalDateTime.now());
 
@@ -70,8 +80,12 @@ public class OrderService {
         // Tính VAT 5%
         BigDecimal vatFee = subtotal.multiply(BigDecimal.valueOf(0.05)).setScale(0, java.math.RoundingMode.HALF_UP);
         order.setVatFee(vatFee);
+        // Tính deliveryFee bằng hàm riêng
+        String shippingType = (String) orderData.get("shippingType");
+        String address = (String) orderData.get("address");
+        BigDecimal deliveryFee = calculateShippingFee(subtotal, shippingType, address);
+        order.setDeliveryFee(deliveryFee);
         // Tính finalAmount
-        BigDecimal deliveryFee = order.getDeliveryFee() != null ? order.getDeliveryFee() : BigDecimal.ZERO;
         order.setFinalAmount(subtotal.add(vatFee).add(deliveryFee));
 
         Order saved = orderRepo.save(order);
