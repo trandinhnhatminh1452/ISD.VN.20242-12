@@ -34,9 +34,6 @@ public class OrderService {
         order.setAddress((String) orderData.get("address"));
         order.setProvinceCity((String) orderData.get("provinceCity"));
         order.setDeliveryFee(toBigDecimal(orderData.get("deliveryFee")));
-        order.setVatFee(toBigDecimal(orderData.get("vatFee")));
-        order.setTotalPrice(toBigDecimal(orderData.get("totalPrice")));
-        order.setFinalAmount(toBigDecimal(orderData.get("finalAmount")));
         order.setStatus("CREATED"); 
         order.setCreatedAt(LocalDateTime.now());
 
@@ -51,27 +48,34 @@ public class OrderService {
         // orderItems
         List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("orderItems");
         List<OrderItem> orderItems = new ArrayList<>();
+        BigDecimal subtotal = BigDecimal.ZERO;
         if (items != null) {
             for (Map<String, Object> item : items) {
                 Integer productId = (Integer) item.get("productId");
+                Integer quantity = (Integer) item.get("quantity");
                 Product product = productRepo.findById(productId).orElse(null);
                 if (product == null) continue;
-
+                BigDecimal price = product.getPrice();
+                subtotal = subtotal.add(price.multiply(BigDecimal.valueOf(quantity)));
                 OrderItem orderItem = new OrderItem();
                 orderItem.setOrder(order);
                 orderItem.setProduct(product);
-                orderItem.setQuantity((Integer) item.get("quantity"));
-                orderItem.setPrice(toBigDecimal(item.get("price")));
+                orderItem.setQuantity(quantity);
+                orderItem.setPrice(price);
                 orderItems.add(orderItem);
             }
         }
-
         order.setOrderItems(orderItems);
+        order.setTotalPrice(subtotal);
+        // Tính VAT 5%
+        BigDecimal vatFee = subtotal.multiply(BigDecimal.valueOf(0.05)).setScale(0, java.math.RoundingMode.HALF_UP);
+        order.setVatFee(vatFee);
+        // Tính finalAmount
+        BigDecimal deliveryFee = order.getDeliveryFee() != null ? order.getDeliveryFee() : BigDecimal.ZERO;
+        order.setFinalAmount(subtotal.add(vatFee).add(deliveryFee));
+
         Order saved = orderRepo.save(order);
-
-        // Tạo giao dịch thanh toán
         createPaymentTransaction(saved, orderData);
-
         return saved.getOrderId();
     }
 
@@ -137,8 +141,7 @@ public class OrderService {
         transaction.setTransactionId(transactionId);
         transaction.setOrder(order);
         transaction.setAmount(order.getFinalAmount());
-        
-        // Xử lý nội dung thanh toán dựa trên phương thức
+
         String paymentMethod = (String) orderData.get("paymentMethod");
         String content;
         if ("bank_transfer".equals(paymentMethod)) {
@@ -193,7 +196,6 @@ public class OrderService {
         if ("CREATED".equals(order.getStatus())) {
             order.setStatus("REJECTED"); 
             orderRepo.save(order);
-            // Đồng bộ trạng thái payment_transaction
             PaymentTransaction tx = paymentTransactionRepo.findByOrderId(orderId);
             if (tx != null) {
                 tx.setStatus("REJECTED");
