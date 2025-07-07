@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const UpdateAccount = ({ user, onClose, onUpdate }) => {
   const [formData, setFormData] = useState({
     username: user.username,
     email: user.email,
     phone: user.phone,
-    roles: user.roles || []
+    roles: user.roles || [],
   });
 
   const handleChange = (e) => {
-    if (e.target.name === 'role') {
+    if (e.target.name === "role") {
       setFormData({
         ...formData,
-        roles: e.target.value ? [e.target.value] : []
+        roles: e.target.value ? [e.target.value] : [],
       });
     } else {
       setFormData({
         ...formData,
-        [e.target.name]: e.target.value
+        [e.target.name]: e.target.value,
       });
     }
   };
@@ -25,18 +25,18 @@ const UpdateAccount = ({ user, onClose, onUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await onUpdate(user.id, formData); 
+      await onUpdate(user.id, formData);
     } catch (error) {
       alert("Cập nhật thất bại: " + error.message);
     }
   };
-  
-  
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Tên đăng nhập</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Tên đăng nhập
+        </label>
         <input
           type="text"
           name="username"
@@ -46,7 +46,9 @@ const UpdateAccount = ({ user, onClose, onUpdate }) => {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Số điện thoại</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Số điện thoại
+        </label>
         <input
           type="tel"
           name="phone"
@@ -56,17 +58,20 @@ const UpdateAccount = ({ user, onClose, onUpdate }) => {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Vai trò</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Vai trò
+        </label>
         <div className="mt-1">
           <select
             name="role"
-            value={formData.roles[0] || ''}
+            value={formData.roles[0] || ""}
             onChange={handleChange}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
             <option value="">Chọn vai trò</option>
             <option value="ROLE_ADMIN">Quản trị viên</option>
             <option value="ROLE_USER">Người dùng</option>
+            <option value="ROLE_MANAGER">Người bán</option>
           </select>
         </div>
       </div>

@@ -8,16 +8,18 @@ public class CartItemResponse {
     private Integer quantity;
     private BigDecimal price;
     private String image;
+    private int stock;
 
     public CartItemResponse() {
     }
 
-    public CartItemResponse(Integer productId, String title, Integer quantity, BigDecimal price, String image) {
+    public CartItemResponse(Integer productId, String title, Integer quantity, BigDecimal price, String image, int stock) {
         this.productId = productId;
         this.title = title;
         this.quantity = quantity;
         this.price = price;
         this.image = image;
+        this.stock = stock;
     }
 
     public Integer getProductId() {
@@ -58,5 +60,12 @@ public class CartItemResponse {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 }

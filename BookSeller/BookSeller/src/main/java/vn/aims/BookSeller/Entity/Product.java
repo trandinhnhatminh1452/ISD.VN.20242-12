@@ -64,8 +64,6 @@ public class Product {
     @Column(name = "created_by")
     private Integer createdBy;
 
-    // ✅ Thêm trường image
-
    @Column(name = "image")
    private String image;
 

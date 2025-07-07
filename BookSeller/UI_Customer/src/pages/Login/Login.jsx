@@ -54,8 +54,10 @@ const Login = () => {
               const roles = userData.roles || [];
 
               console.log("Đăng nhập với vai trò:", roles);
-              if (roles.includes("ROLE_ADMIN")) {
-      
+              if (
+                roles.includes("ROLE_ADMIN") ||
+                roles.includes("ROLE_MANAGER")
+              ) {
                 navigate("/manage");
               } else {
                 navigate("/");

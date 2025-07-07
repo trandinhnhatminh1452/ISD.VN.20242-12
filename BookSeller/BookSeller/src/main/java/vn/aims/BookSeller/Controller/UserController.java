@@ -41,17 +41,6 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RoleService roleService;
-//    @PostMapping("/register")
-//    public ResponseEntity<?> register(@RequestBody User user) {
-//        if (userRepo.existsByEmail(user.getEmail())) {
-//            return ResponseEntity.badRequest().body("Email already used");
-//        }
-//
-//        userRepo.save(user);
-//        emailService.sendRegistrationEmail(user.getEmail(), user.getUsername());
-//
-//        return ResponseEntity.ok("Registered successfully. Please check your email!");
-//    }
 
 @GetMapping("/all")
 public ResponseEntity<List<UserDTO>> getAllUsers() {
@@ -91,8 +80,8 @@ Timestamp timestamp = Timestamp.valueOf(localDateTime);
         cart.setSessionId(UUID.randomUUID().toString());
         cart.setUser(user);
 
-        user.setCart(cart); // Gán lại cho chiều ngược
-        userRepo.save(user); // Hibernate sẽ cascade lưu luôn cart
+        user.setCart(cart); 
+        userRepo.save(user); 
 
 
         return ResponseEntity.ok("Registered successfully!");
@@ -104,23 +93,14 @@ Timestamp timestamp = Timestamp.valueOf(localDateTime);
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable int id, @RequestBody UserUpdateRequest userUpdateRequest){
-        try{
-        return this.userService.updateUser(id, userUpdateRequest);}
-        catch (Exception e){
-            return null;
-        }
+public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody UserUpdateRequest userUpdateRequest) {
+    try {
+        User updatedUser = this.userService.updateUser(id, userUpdateRequest);
+        return ResponseEntity.ok(new UserDTO(updatedUser)); 
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body("Cập nhật thất bại: " + e.getMessage());
     }
-
-//    @GetMapping("/roles")
-//    public List<Role> getAllRoles(){
-//        return this.roleService.findAll();
-//    }
-//
-//    @GetMapping("/roles/{name}")
-//    public Role getRole(@PathVariable String name){
-//        return this.roleService.findByName(name);
-//    }  ==> test
+}
 
     @PostMapping("/authorize")
     public ResponseEntity<User> authorize(@RequestBody AuthorizationRequest request) {

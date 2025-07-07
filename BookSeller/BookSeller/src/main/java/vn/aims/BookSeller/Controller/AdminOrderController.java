@@ -91,7 +91,7 @@ public class AdminOrderController {
                     OrderDTO dto = new OrderDTO();
                     dto.setOrderId(order.getOrderId());
                     dto.setStatus(order.getStatus());
-                    dto.setFinalAmount(order.getFinalAmount()); // Đảm bảo finalAmount là BigDecimal
+                    dto.setFinalAmount(order.getFinalAmount()); 
                     dto.setCreatedAt(order.getCreatedAt());
                     dto.setName(order.getName());
                     dto.setEmail(order.getEmail());
@@ -99,7 +99,7 @@ public class AdminOrderController {
                     dto.setAddress(order.getAddress());
                     dto.setProvinceCity(order.getProvinceCity());
 
-                    // Map order items
+                    
                     if (order.getOrderItems() != null) {
                         List<OrderItemDTO> items = order.getOrderItems().stream()
                             .map(item -> {
@@ -184,8 +184,8 @@ public ResponseEntity<OrderDTO> getOrderDetails(@PathVariable Integer orderId) {
         
         PaymentTransaction transaction = paymentTransactionRepo.findByOrderId(orderId);
         if (transaction != null) {
-            dto.setPaymentMethod(transaction.getContent()); // ví dụ: "Chuyển khoản", "Momo"
-            dto.setPaidAmount(transaction.getAmount());     // số tiền đã thanh toán
+            dto.setPaymentMethod(transaction.getContent()); 
+            dto.setPaidAmount(transaction.getAmount());    
         }
 
         if (order.getOrderItems() != null) {

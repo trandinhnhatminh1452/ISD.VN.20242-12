@@ -23,6 +23,7 @@ export const sidebarItems = [
     name: "Quản lý tài khoản",
     icon: User,
     page: "accountInfo",
+    roles: ["ROLE_ADMIN"],
     active: (current) => current === "accountInfo",
   },
   {

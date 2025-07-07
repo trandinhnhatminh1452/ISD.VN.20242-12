@@ -79,7 +79,8 @@ public ResponseEntity<List<CartItemResponse>> getCartItems(@PathVariable Integer
             item.getProduct().getTitle(),
             item.getQuantity(),
             item.getProduct().getPrice(),
-            item.getProduct().getImage()
+            item.getProduct().getImage(),
+            item.getProduct().getQuantity() 
         );
     }).toList();
     return ResponseEntity.ok(responses);

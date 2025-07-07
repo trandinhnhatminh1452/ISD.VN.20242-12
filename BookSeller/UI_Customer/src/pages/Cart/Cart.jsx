@@ -29,15 +29,21 @@ const Cart = () => {
   }, [cart]);
 
   const handleQtyChange = (productId, type, value = null) => {
+    const item = cart.find((c) => c.productId === productId);
+    const currentQty = item?.quantity || 1;
+    const stock = item?.stock || 999;
+
     if (type === "inc") {
-      increaseItem(productId);
+      if (currentQty < stock) {
+        increaseItem(productId);
+      } else {
+        alert("Đã đạt số lượng tối đa trong kho.");
+      }
     } else if (type === "dec") {
-      const item = cart.find((c) => c.productId === productId);
-      if (item && item.quantity > 1) {
+      if (currentQty > 1) {
         decreaseItem(productId);
       }
     } else if (value !== null) {
-      // Gọi API hoặc cập nhật quantity tùy logic bạn muốn
     }
   };
 
@@ -145,7 +151,11 @@ const Cart = () => {
                         </td>
                         <td>
                           <div className="cart-qty">
-                            <button onClick={() => handleQtyChange(item.productId, "dec")}>
+                            <button
+                              onClick={() =>
+                                handleQtyChange(item.productId, "dec")
+                              }
+                            >
                               -
                             </button>
                             <input
@@ -157,7 +167,10 @@ const Cart = () => {
                               }
                               onChange={(e) => {
                                 const value = e.target.value;
-                                if (value === "" || /^[0-9]{0,3}$/.test(value)) {
+                                if (
+                                  value === "" ||
+                                  /^[0-9]{0,3}$/.test(value)
+                                ) {
                                   setInputQty((prev) => ({
                                     ...prev,
                                     [item.productId]: value,
@@ -179,7 +192,11 @@ const Cart = () => {
                               min="1"
                               max="999"
                             />
-                            <button onClick={() => handleQtyChange(item.productId, "inc")}>
+                            <button
+                              onClick={() =>
+                                handleQtyChange(item.productId, "inc")
+                              }
+                            >
                               +
                             </button>
                           </div>

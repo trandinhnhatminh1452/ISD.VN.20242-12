@@ -14,7 +14,6 @@ public class CartItemId implements Serializable {
         this.product = product;
     }
 
-    // equals() and hashCode()
 
     @Override
     public boolean equals(Object o) {

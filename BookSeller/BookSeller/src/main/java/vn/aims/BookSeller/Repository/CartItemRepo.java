@@ -16,13 +16,19 @@ public class CartItemRepo {
     @PersistenceContext
     private EntityManager entityManager;
     @Transactional
-    public void insertCartItem(Integer cartId,Integer productId,Integer quantity){
-        entityManager.createNativeQuery("insert into itss.cart_item (cart_id,product_id,quantity) values(?,?,?)")
-        .setParameter(1, cartId)
-        .setParameter(2, productId)
-        .setParameter(3, quantity)
-        .executeUpdate();
-    }
+    public void insertCartItem(Integer cartId, Integer productId, Integer quantity) {
+    entityManager.createNativeQuery("""
+        INSERT INTO itss.cart_item (cart_id, product_id, quantity)
+        VALUES (?, ?, ?)
+        ON CONFLICT (cart_id, product_id)
+        DO UPDATE SET quantity = itss.cart_item.quantity + EXCLUDED.quantity
+    """)
+    .setParameter(1, cartId)
+    .setParameter(2, productId)
+    .setParameter(3, quantity)
+    .executeUpdate();
+}
+
     // them mot cart itemvao gio hang 
     @Transactional
     public void deleteCartItem(Integer productId,Integer cartId){
@@ -57,7 +63,7 @@ public class CartItemRepo {
     
     public List<CartItem> getCartItemsByCartId(Integer cartId) {
     return entityManager.createNativeQuery(
-        "SELECT * FROM itss.cart_item WHERE cart_id = :cartId", CartItem.class)
+        "SELECT * FROM itss.cart_item WHERE cart_id = :cartId ORDER BY product_id", CartItem.class)
         .setParameter("cartId", cartId)
         .getResultList();
 }

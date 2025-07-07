@@ -27,7 +27,7 @@ public class Cart {
     private List<CartItem> cartItems;
 
     @OneToOne
-    @JoinColumn(name = "user_id", unique = true)  // user_id nullable nếu có khách ko đăng nhập
+    @JoinColumn(name = "user_id", unique = true)
     @JsonBackReference
     private User user;
 
