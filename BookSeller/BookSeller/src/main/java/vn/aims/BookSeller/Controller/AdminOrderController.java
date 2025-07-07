@@ -32,7 +32,7 @@ public class AdminOrderController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class OrderDTO {
-         private Integer orderId;
+    private Integer orderId;
     private String status;
     private BigDecimal finalAmount;
     private java.time.LocalDateTime createdAt;

@@ -13,6 +13,7 @@ const ProductDetail = () => {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [recIndex, setRecIndex] = useState(0);
+  const [genre, setGenre] = useState("");
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -39,15 +40,19 @@ const ProductDetail = () => {
         // Xác định tác giả/nghệ sĩ/đạo diễn tùy loại
         if (data.category === "Book" && data.productDetailBook?.authors) {
           setAuthor(data.productDetailBook.authors);
+          setGenre(data.productDetailBook.genre || "");
         } else if (data.category === "CD" && data.productDetailCD?.artists) {
           setAuthor(data.productDetailCD.artists);
+          setGenre(data.productDetailCD.genre || "");
         } else if (
           data.category === "DVD" &&
           data.productDetailDVD?.directors
         ) {
           setAuthor(data.productDetailDVD.directors);
+          setGenre(data.productDetailDVD.genre || "");
         } else if (data.category === "LP" && data.productDetailLP?.artists) {
           setAuthor(data.productDetailLP.artists);
+          setGenre(data.productDetailLP.genre || "");
         } else {
           const creatorResponse = await fetch(
             `http://localhost:8080/api/product/creator/${bookId}`
@@ -167,6 +172,10 @@ const ProductDetail = () => {
               </strong>{" "}
               {author || "Đang tải..."}
             </p>
+            <p className="genre">
+              <strong>Thể loại:</strong> {genre || "Không rõ"}
+            </p>
+
             <p className="price">
               <span className="price-value">
                 {formatPrice(book.price)}
@@ -218,7 +227,92 @@ const ProductDetail = () => {
         <div className="book-desc-section">
           <h3 className="desc-heading">Giới thiệu sản phẩm</h3>
           <div className="description">
-            {book.description || "Không có mô tả"}
+            <p>{book.description || "Không có mô tả"}</p>
+
+            {/* Thông tin riêng theo loại sản phẩm */}
+            {book.category === "Book" && book.productDetailBook && (
+              <>
+                <p>
+                  <strong>Loại bìa:</strong>{" "}
+                  {book.productDetailBook.coverType || "Không rõ"}
+                </p>
+                <p>
+                  <strong>Nhà xuất bản:</strong>{" "}
+                  {book.productDetailBook.publisher || "Không rõ"}
+                </p>
+                <p>
+                  <strong>Ngôn ngữ:</strong>{" "}
+                  {book.productDetailBook.language || "Không rõ"}
+                </p>
+                <p>
+                  <strong>Số trang:</strong>{" "}
+                  {book.productDetailBook.pages || "Không rõ"}
+                </p>
+              </>
+            )}
+
+            {book.category === "CD" && book.productDetailCD && (
+              <>
+                <p>
+                  <strong>Hãng ghi âm:</strong>{" "}
+                  {book.productDetailCD.recordLabel || "Không rõ"}
+                </p>
+                <p>
+                  <strong>Danh sách bài hát:</strong>
+                </p>
+                <ul className="tracklist">
+                  {(book.productDetailCD.tracklist || "")
+                    .split(",")
+                    .map((track, index) => (
+                      <li key={index}>{track.trim()}</li>
+                    ))}
+                </ul>
+              </>
+            )}
+
+            {book.category === "DVD" && book.productDetailDVD && (
+              <>
+                <p>
+                  <strong>Loại đĩa:</strong>{" "}
+                  {book.productDetailDVD.disc_type || "Không rõ"}
+                </p>
+                <p>
+                  <strong>Thời lượng:</strong>{" "}
+                  {book.productDetailDVD.runtime || "Không rõ"} phút
+                </p>
+                <p>
+                  <strong>Hãng sản xuất:</strong>{" "}
+                  {book.productDetailDVD.studio || "Không rõ"}
+                </p>
+                <p>
+                  <strong>Ngôn ngữ:</strong>{" "}
+                  {book.productDetailDVD.language || "Không rõ"}
+                </p>
+                <p>
+                  <strong>Phụ đề:</strong>{" "}
+                  {book.productDetailDVD.subtitles || "Không rõ"}
+                </p>
+              </>
+            )}
+
+            {book.category === "LP" && book.productDetailLP && (
+              <>
+                <p>
+                  <strong>Hãng ghi âm:</strong>{" "}
+                  {book.productDetailLP.recordLabel || "Không rõ"}
+                </p>
+                <p>
+                  <strong>Danh sách bài hát:</strong>
+                </p>
+                <ul className="tracklist">
+                  {(book.productDetailLP.tracklist || "")
+                    .split(",")
+                    .map((track, index) => (
+                      <li key={index}>{track.trim()}</li>
+                    ))}
+                </ul>
+              </>
+            )}
           </div>
         </div>
 

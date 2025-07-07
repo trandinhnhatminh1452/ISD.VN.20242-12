@@ -14,11 +14,10 @@ export const AuthProvider = ({ children }) => {
         cartId: userData.cartId,
       },
     };
-  
+
     setUser(updatedUser);
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
-  
 
   const logout = () => {
     setUser(null);
@@ -32,7 +31,6 @@ export const AuthProvider = ({ children }) => {
       try {
         const userData = JSON.parse(storedUser);
         if (userData && typeof userData === "object") {
-          // Đảm bảo có user.cart
           if (!userData.cart && userData.cartId) {
             userData.cart = { cartId: userData.cartId };
           }
@@ -44,10 +42,9 @@ export const AuthProvider = ({ children }) => {
       }
     }
   }, []);
-  
 
   return (
-    <AuthContext.Provider value={{ user, login, logout,setUser }}>
+    <AuthContext.Provider value={{ user, login, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );
