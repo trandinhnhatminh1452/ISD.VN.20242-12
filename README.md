@@ -65,14 +65,4 @@ cd UI_Customer
 npm install
 npm run dev
 ```
-----
-## 🔑 Tài khoản mẫu
-
-- **Admin**
-  - Username: `admin`
-  - Password: `123456`
-
-- **User**
-  - Username: `user`
-  - Password: `123456`
 
