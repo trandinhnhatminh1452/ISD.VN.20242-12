@@ -16,6 +16,7 @@ public class CartItemRepo {
     @PersistenceContext
     private EntityManager entityManager;
     @Transactional
+
     public void insertCartItem(Integer cartId, Integer productId, Integer quantity) {
     entityManager.createNativeQuery("""
         INSERT INTO itss.cart_item (cart_id, product_id, quantity)
@@ -28,6 +29,7 @@ public class CartItemRepo {
     .setParameter(3, quantity)
     .executeUpdate();
 }
+
 
     // them mot cart itemvao gio hang 
     @Transactional

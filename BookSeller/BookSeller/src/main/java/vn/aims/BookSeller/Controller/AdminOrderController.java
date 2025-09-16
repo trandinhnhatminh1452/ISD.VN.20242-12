@@ -35,6 +35,7 @@ public class AdminOrderController {
     private Integer orderId;
     private String status;
     private BigDecimal finalAmount;
+
     private java.time.LocalDateTime createdAt;
     private String name;
     private String email;
@@ -59,12 +60,23 @@ public class AdminOrderController {
     public void setItems(List<OrderItemDTO> items) { this.items = items; }
     public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
     public void setNote(String note) { this.note = note; }
+
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setItems(List<OrderItemDTO> items) {
+        this.items = items;
+    }
+}
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class OrderItemDTO {
+
         private Integer productId;
         private String productName;
         private Integer quantity;
@@ -74,7 +86,22 @@ public class AdminOrderController {
         public void setProductName(String productName) { this.productName = productName; }
         public void setQuantity(Integer quantity) { this.quantity = quantity; }
         public void setPrice(BigDecimal price) { this.price = price; }
+
     }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+}
+
 
     private static final Logger logger = LoggerFactory.getLogger(AdminOrderController.class);
 

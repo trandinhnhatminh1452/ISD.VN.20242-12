@@ -45,8 +45,10 @@ public class CartItemController {
         String username = authentication.getName();
 
         // Truy xuất user và cart
+
         User user = userService.findByUsername(username);
         Cart cart = user.getCart();
+
         cartitemservice.deleteCartItem(request.getProduct_id(),request.getCart_id());
     }
     @PostMapping("/cartitem2")
@@ -55,8 +57,10 @@ public class CartItemController {
         String username = authentication.getName();
 
         // Truy xuất user và cart
+
         User user = userService.findByUsername(username);
         Cart cart = user.getCart();
+
         cartitemservice.decreaseCartItem(request.getProduct_id(),request.getCart_id());
     }
     @PostMapping("/cartitem3")
@@ -65,8 +69,10 @@ public class CartItemController {
         String username = authentication.getName();
 
         // Truy xuất user và cart
+
         User user = userService.findByUsername(username);
         Cart cart = user.getCart();
+
         cartitemservice.increaseCartItem(request.getCart_id(),request.getProduct_id());
     }
 

@@ -38,6 +38,7 @@ export const CartProvider = ({ children }) => {
         quantity,
       });
 
+
       await axios.post("/api/cartitem/cartitem", {
         product_id: productId,
         cart_id: user.cart.cartId,
@@ -92,6 +93,7 @@ export const CartProvider = ({ children }) => {
     } catch (err) {
       console.error("Lỗi khi tăng số lượng:", err);
     }
+
   };
 
   return (
