@@ -21,6 +21,8 @@ $shadow-color: rgba(0, 0, 0, 0.1);
     h2 {
       margin-top: -15px;
       font-size: 33px;
+      font-weight: 600;
+      margin-bottom: 12px;
     }
 
     .login-form {
@@ -31,7 +33,6 @@ $shadow-color: rgba(0, 0, 0, 0.1);
       .form-group {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
 
         .form-input {
           padding: 0.75rem;

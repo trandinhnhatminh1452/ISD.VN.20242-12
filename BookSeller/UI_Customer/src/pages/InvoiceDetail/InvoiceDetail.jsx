@@ -10,7 +10,6 @@ const InvoiceDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Lấy paymentMethod từ state nếu có (khi vừa đặt hàng xong)
   const paymentMethodFromState = location.state?.paymentMethod;
 
   useEffect(() => {
@@ -69,12 +68,12 @@ const InvoiceDetail = () => {
           <div><b>Phương thức thanh toán:</b> {
             paymentMethodFromState === 'cod'
               ? 'Thanh toán khi nhận hàng'
-              : paymentMethodFromState === 'vnpay'
-                ? 'Thanh toán qua VNPay'
+              : paymentMethodFromState === 'bank_transfer'
+                ? 'Chuyển khoản qua VietQR'
                 : (invoice.paymentMethod === 'cod'
                     ? 'Thanh toán khi nhận hàng'
-                    : invoice.paymentMethod === 'vnpay'
-                      ? 'Thanh toán qua VNPay'
+                    : invoice.paymentMethod === 'bank_transfer'
+                      ? 'Chuyển khoản qua VietQR'
                       : 'Chuyển khoản')
           }</div>
           <div><b>Trạng thái:</b> {invoice.status === 'ISSUED' ? 'Đã phát hành' : invoice.status}</div>

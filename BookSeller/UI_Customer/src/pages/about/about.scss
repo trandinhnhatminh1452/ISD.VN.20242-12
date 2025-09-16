@@ -1,15 +1,12 @@
 .about {
-
-
   .section {
-    
     h2 {
       color: #000;
       font-size: 2.5rem;
       margin-bottom: 2rem;
       text-align: center;
     }
-    
+
     p {
       color: #666;
       line-height: 1.8;
@@ -18,7 +15,8 @@
   }
 
   .introduction-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://images.pexels.com/photos/757855/pexels-photo-757855.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2);
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+      url(https://images.pexels.com/photos/757855/pexels-photo-757855.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2);
     background-size: cover;
     background-position: center;
     height: 600px;
@@ -31,19 +29,19 @@
     width: 100%;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
-    
+
     h2 {
       color: #fff;
       margin-bottom: 1.5rem;
       font-size: 60px;
     }
-    
+
     p {
       color: #fff;
       padding: 1rem;
       width: 80%;
       max-width: 720px;
-    font-size: 20px;
+      font-size: 20px;
     }
   }
 
@@ -51,7 +49,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
-    
+
     .card {
       background: #fff;
       padding: 2rem;
@@ -61,14 +59,14 @@
       margin-left: 78px;
       margin-top: 23px;
       transition: all 0.3s ease;
-      
+
       h3 {
         color: #000;
         margin-bottom: 1rem;
         font-size: 30px;
         margin-top: 0;
       }
-      
+
       p {
         color: #000 !important;
       }
@@ -84,7 +82,7 @@
 
   .team-section {
     text-align: center;
-    
+
     h2 {
       color: #000;
       font-size: 2.5rem;
@@ -125,7 +123,8 @@
             height: 200px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 1rem;
+            // margin-bottom: 1rem;
+            margin: 0 auto 1rem auto;
           }
 
           h3 {
@@ -172,26 +171,25 @@
       font-size: 2.2rem;
       font-weight: 600;
       margin-bottom: 2rem;
-
     }
 
     .contact-info {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 2rem;
-      
+
       .info-item {
         display: flex;
         align-items: center;
         gap: 1rem;
         justify-content: center;
         margin-top: 20px;
-        
+
         i {
           font-size: 1.5rem;
           color: #007bff;
         }
-        
+
         p {
           margin: 0;
           font-size: 1.1rem;

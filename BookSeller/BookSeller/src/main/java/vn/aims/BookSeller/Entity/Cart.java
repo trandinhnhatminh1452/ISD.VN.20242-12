@@ -1,6 +1,8 @@
 package vn.aims.BookSeller.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,10 +23,11 @@ public class Cart {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<CartItem> cartItems;
 
     @OneToOne
-    @JoinColumn(name = "user_id", unique = true)  // user_id nullable nếu có khách ko đăng nhập
+    @JoinColumn(name = "user_id", unique = true)
     @JsonBackReference
     private User user;
 

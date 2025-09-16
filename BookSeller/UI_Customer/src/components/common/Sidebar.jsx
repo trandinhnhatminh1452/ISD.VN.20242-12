@@ -3,11 +3,11 @@ import { sidebarItems } from "../../data/sidebarData";
 import { useAuth } from "../../context/AuthContext";
 
 const Sidebar = ({ currentPage, setCurrentPage }) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const userRoles = user?.roles || [];
 
   const handleItemClick = (item) => {
     if (item.action === "logout") {
-      // 👉 Gọi API logout nếu cần
       fetch("http://localhost:8080/logout", {
         method: "POST",
         credentials: "include",
@@ -19,13 +19,19 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
     }
   };
 
+  // 👉 Filter sidebar items theo roles nếu có yêu cầu
+  const filteredItems = sidebarItems.filter((item) => {
+    if (!item.roles) return true; // Không có roles yêu cầu => ai cũng thấy
+    return item.roles.some((role) => userRoles.includes(role));
+  });
+
   return (
     <div className="w-64 bg-white shadow-lg h-screen">
       <div className="p-6">
         <h1 className="text-xl font-bold text-gray-800">Product Manager</h1>
       </div>
       <nav className="mt-6 block">
-        {sidebarItems.map((item, index) => (
+        {filteredItems.map((item, index) => (
           <div
             key={index}
             className={`flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100 cursor-pointer relative ${

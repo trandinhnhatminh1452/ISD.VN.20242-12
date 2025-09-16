@@ -1,66 +1,65 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Form, Input, Button, Radio, message } from 'antd';
-import { useAuth } from '../../context/AuthContext';
-import './Payment.css';
-import { orderAPI } from '../../utils/api';
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Form, Input, Button, Radio, message } from "antd";
+import { useAuth } from "../../context/AuthContext";
+import "./Payment.css";
+import { orderAPI } from "../../utils/api";
 
 const Payment = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
-  const [paymentMethod, setPaymentMethod] = useState('cod');
-  const [shippingType, setShippingType] = useState('normal');
+  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [shippingType, setShippingType] = useState("normal");
   const [loading, setLoading] = useState(false);
 
-  // Lấy sản phẩm trong giỏ hàng
   const cartItems = location.state?.cartItems || [];
-  const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  const deliveryFee = shippingType === 'rush' ? 100000 : 50000;
-  const vatFee = Math.round(subtotal * 0.05);
-  const totalAmount = subtotal + deliveryFee + vatFee;
+
+  const deliveryFee = shippingType === "rush" ? 100000 : 50000;
 
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      // Debug: Log cartItems để kiểm tra
-      console.log("Cart items:", cartItems);
-      
-      // Chuẩn bị dữ liệu gửi lên backend
       const orderData = {
         name: values.customer_name,
         email: values.customer_email,
         phone: values.customer_phone,
         address: values.customer_address,
         provinceCity: values.province_city,
-        totalPrice: subtotal,
         deliveryFee: deliveryFee,
-        vatFee: vatFee,
-        finalAmount: totalAmount,
-        status: 'CREATED',
+        status: "CREATED",
         userId: user?.id,
-        orderItems: cartItems.map(item => {
+        orderItems: cartItems.map((item) => {
           const productId = item.productId || item.id;
           if (!productId) {
-            throw new Error(`ProductId is missing for item: ${JSON.stringify(item)}`);
+            throw new Error(
+              `ProductId is missing for item: ${JSON.stringify(item)}`
+            );
           }
           return {
             productId: productId,
             quantity: item.quantity,
-            price: item.price
           };
         }),
-        paymentMethod: paymentMethod
+        paymentMethod: paymentMethod,
       };
-      
-      console.log("Order data being sent:", orderData);
+
       const response = await orderAPI.createOrder(orderData);
-      message.success('Đặt hàng thành công!');
-      navigate(`/invoice/${response.orderId}`, { state: { paymentMethod: paymentMethod } });
+      if (paymentMethod === 'bank_transfer') {
+        navigate('/vietqr', { 
+          state: { 
+            orderData: orderData,
+            orderId: response.orderId
+          } 
+        });
+      } else {
+        message.success('Đặt hàng thành công!');
+        navigate(`/invoice/${response.orderId}`, { state: { paymentMethod: paymentMethod } });
+      }
     } catch (error) {
       console.error("Payment error:", error);
-      message.error('Thanh toán thất bại. Vui lòng thử lại.');
+      message.error("Thanh toán thất bại. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -81,7 +80,7 @@ const Payment = () => {
             <Form.Item
               name="customer_name"
               label="Họ và tên"
-              rules={[{ required: true, message: 'Vui lòng nhập họ tên' }]}
+              rules={[{ required: true, message: "Vui lòng nhập họ tên" }]}
             >
               <Input placeholder="Nhập họ và tên" />
             </Form.Item>
@@ -90,8 +89,11 @@ const Payment = () => {
               name="customer_phone"
               label="Số điện thoại"
               rules={[
-                { required: true, message: 'Vui lòng nhập số điện thoại' },
-                { pattern: /^[0-9]{10}$/, message: 'Số điện thoại không hợp lệ' }
+                { required: true, message: "Vui lòng nhập số điện thoại" },
+                {
+                  pattern: /^[0-9]{10}$/,
+                  message: "Số điện thoại không hợp lệ",
+                },
               ]}
             >
               <Input placeholder="Nhập số điện thoại" />
@@ -101,8 +103,8 @@ const Payment = () => {
               name="customer_email"
               label="Email"
               rules={[
-                { required: true, message: 'Vui lòng nhập email' },
-                { type: 'email', message: 'Email không hợp lệ' }
+                { required: true, message: "Vui lòng nhập email" },
+                { type: "email", message: "Email không hợp lệ" },
               ]}
             >
               <Input placeholder="Nhập email" />
@@ -111,7 +113,7 @@ const Payment = () => {
             <Form.Item
               name="customer_address"
               label="Địa chỉ"
-              rules={[{ required: true, message: 'Vui lòng nhập địa chỉ' }]}
+              rules={[{ required: true, message: "Vui lòng nhập địa chỉ" }]}
             >
               <Input.TextArea placeholder="Nhập địa chỉ giao hàng" />
             </Form.Item>
@@ -119,9 +121,18 @@ const Payment = () => {
             <Form.Item
               name="province_city"
               label="Tỉnh/Thành phố"
-              rules={[{ required: true, message: 'Vui lòng chọn tỉnh/thành phố' }]}
+              rules={[
+                { required: true, message: "Vui lòng chọn tỉnh/thành phố" },
+              ]}
             >
-              <select style={{ width: '100%', padding: '8px', borderRadius: '4px' }}>
+              <select
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  borderRadius: "4px",
+                  border: "1px solid #d9d9d9",
+                }}
+              >
                 <option value="">-- Chọn tỉnh/thành phố --</option>
                 <option value="Hà Nội">Hà Nội</option>
                 <option value="TP.HCM">TP.HCM</option>
@@ -199,7 +210,7 @@ const Payment = () => {
             <Form.Item name="payment_method" initialValue="cod">
               <Radio.Group onChange={(e) => setPaymentMethod(e.target.value)}>
                 <Radio value="cod">Thanh toán khi nhận hàng (COD)</Radio>
-                <Radio value="vnpay">Thanh toán qua VNPay</Radio>
+                <Radio value="bank_transfer">Chuyển khoản qua VietQR</Radio>
               </Radio.Group>
             </Form.Item>
           </div>
@@ -212,26 +223,6 @@ const Payment = () => {
                 <Radio value="rush">Giao hàng nhanh (100.000đ)</Radio>
               </Radio.Group>
             </Form.Item>
-          </div>
-
-          <div className="payment-summary">
-            <h2>Tổng Thanh Toán</h2>
-            <div className="summary-item">
-              <span>Tạm tính:</span>
-              <span>{subtotal.toLocaleString('vi-VN')}đ</span>
-            </div>
-            <div className="summary-item">
-              <span>Phí vận chuyển:</span>
-              <span>{deliveryFee.toLocaleString('vi-VN')}đ</span>
-            </div>
-            <div className="summary-item">
-              <span>VAT (5%):</span>
-              <span>{vatFee.toLocaleString('vi-VN')}đ</span>
-            </div>
-            <div className="summary-item total">
-              <span>Tổng cộng:</span>
-              <span>{totalAmount.toLocaleString('vi-VN')}đ</span>
-            </div>
           </div>
 
           <Form.Item>
@@ -250,4 +241,4 @@ const Payment = () => {
   );
 };
 
-export default Payment; 
+export default Payment;

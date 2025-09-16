@@ -26,6 +26,17 @@ public class OrderService {
     @Autowired private PaymentTransactionRepo paymentTransactionRepo;
     @Autowired private UserRepo userRepo;
 
+    private BigDecimal calculateShippingFee(BigDecimal subtotal, String shippingType, String address) {
+        // Ví dụ: miễn phí nếu subtotal > 500.000đ
+        if (subtotal.compareTo(BigDecimal.valueOf(500000)) >= 0) {
+            return BigDecimal.ZERO;
+        }
+        if ("rush".equals(shippingType)) {
+            return BigDecimal.valueOf(100000);
+        }
+        return BigDecimal.valueOf(50000);
+    }
+
     public Integer createOrder(Map<String, Object> orderData) {
         Order order = new Order();
         order.setName((String) orderData.get("name"));
@@ -33,11 +44,7 @@ public class OrderService {
         order.setPhone((String) orderData.get("phone"));
         order.setAddress((String) orderData.get("address"));
         order.setProvinceCity((String) orderData.get("provinceCity"));
-        order.setDeliveryFee(toBigDecimal(orderData.get("deliveryFee")));
-        order.setVatFee(toBigDecimal(orderData.get("vatFee")));
-        order.setTotalPrice(toBigDecimal(orderData.get("totalPrice")));
-        order.setFinalAmount(toBigDecimal(orderData.get("finalAmount")));
-        order.setStatus((String) orderData.getOrDefault("status", "0")); // mặc định là chờ duyệt
+        order.setStatus("CREATED"); 
         order.setCreatedAt(LocalDateTime.now());
 
         if (orderData.get("userId") != null) {
@@ -51,27 +58,38 @@ public class OrderService {
         // orderItems
         List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("orderItems");
         List<OrderItem> orderItems = new ArrayList<>();
+        BigDecimal subtotal = BigDecimal.ZERO;
         if (items != null) {
             for (Map<String, Object> item : items) {
                 Integer productId = (Integer) item.get("productId");
+                Integer quantity = (Integer) item.get("quantity");
                 Product product = productRepo.findById(productId).orElse(null);
                 if (product == null) continue;
-
+                BigDecimal price = product.getPrice();
+                subtotal = subtotal.add(price.multiply(BigDecimal.valueOf(quantity)));
                 OrderItem orderItem = new OrderItem();
                 orderItem.setOrder(order);
                 orderItem.setProduct(product);
-                orderItem.setQuantity((Integer) item.get("quantity"));
-                orderItem.setPrice(toBigDecimal(item.get("price")));
+                orderItem.setQuantity(quantity);
+                orderItem.setPrice(price);
                 orderItems.add(orderItem);
             }
         }
-
         order.setOrderItems(orderItems);
+        order.setTotalPrice(subtotal);
+        // Tính VAT 5%
+        BigDecimal vatFee = subtotal.multiply(BigDecimal.valueOf(0.05)).setScale(0, java.math.RoundingMode.HALF_UP);
+        order.setVatFee(vatFee);
+        // Tính deliveryFee bằng hàm riêng
+        String shippingType = (String) orderData.get("shippingType");
+        String address = (String) orderData.get("address");
+        BigDecimal deliveryFee = calculateShippingFee(subtotal, shippingType, address);
+        order.setDeliveryFee(deliveryFee);
+        // Tính finalAmount
+        order.setFinalAmount(subtotal.add(vatFee).add(deliveryFee));
+
         Order saved = orderRepo.save(order);
-
-        // Tạo giao dịch thanh toán
         createPaymentTransaction(saved, orderData);
-
         return saved.getOrderId();
     }
 
@@ -137,9 +155,20 @@ public class OrderService {
         transaction.setTransactionId(transactionId);
         transaction.setOrder(order);
         transaction.setAmount(order.getFinalAmount());
-        transaction.setContent("Phương thức thanh toán: " + orderData.get("paymentMethod"));
+
+        String paymentMethod = (String) orderData.get("paymentMethod");
+        String content;
+        if ("bank_transfer".equals(paymentMethod)) {
+            content = "Chuyển khoản qua VietQR - HOADON" + order.getOrderId();
+        } else if ("cod".equals(paymentMethod)) {
+            content = "Thanh toán khi nhận hàng (COD)";
+        } else {
+            content = "Phương thức thanh toán: " + paymentMethod;
+        }
+        
+        transaction.setContent(content);
         transaction.setDatetime(now);
-        transaction.setStatus("completed");
+        transaction.setStatus("CREATED"); 
 
         paymentTransactionRepo.save(transaction);
     }
@@ -157,12 +186,18 @@ public class OrderService {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        if ("0".equals(order.getStatus())) {
-            order.setStatus("1"); // Đã duyệt
+        if ("CREATED".equals(order.getStatus())) {
+            order.setStatus("APPROVED"); 
             if (order.getRushTime() == null) {
                 order.setRushTime(LocalTime.of(14, 0));
             }
             orderRepo.save(order);
+            // Đồng bộ trạng thái payment_transaction
+            PaymentTransaction tx = paymentTransactionRepo.findByOrderId(orderId);
+            if (tx != null) {
+                tx.setStatus("APPROVED");
+                paymentTransactionRepo.save(tx);
+            }
         } else {
             throw new RuntimeException("Order cannot be approved because it is not in pending state");
         }
@@ -172,9 +207,14 @@ public class OrderService {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        if ("0".equals(order.getStatus())) {
-            order.setStatus("2"); // Đã từ chối
+        if ("CREATED".equals(order.getStatus())) {
+            order.setStatus("REJECTED"); 
             orderRepo.save(order);
+            PaymentTransaction tx = paymentTransactionRepo.findByOrderId(orderId);
+            if (tx != null) {
+                tx.setStatus("REJECTED");
+                paymentTransactionRepo.save(tx);
+            }
         } else {
             throw new RuntimeException("Order cannot be canceled because it is not in pending state");
         }

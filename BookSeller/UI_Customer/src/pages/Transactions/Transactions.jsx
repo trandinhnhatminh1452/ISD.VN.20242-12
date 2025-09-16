@@ -76,52 +76,69 @@ const Transactions = () => {
           </div>
         ) : (
           <div className="transactions-list">
-            {transactions.map((transaction, index) => (
-              <div key={index} className="transaction-item">
-                <div className="transaction-header">
-                  <div className="transaction-id">
-                    <strong>Mã giao dịch:</strong> {transaction.transactionId}
+            {transactions.map((transaction, index) => {
+              let statusLabel = '';
+              let statusClass = '';
+              if (transaction.status === 'CREATED') {
+                statusLabel = 'Đang chờ';
+                statusClass = 'status-pending';
+              } else if (transaction.status === 'APPROVED') {
+                statusLabel = 'Hoàn thành';
+                statusClass = 'status-success';
+              } else if (transaction.status === 'REJECTED') {
+                statusLabel = 'Từ chối';
+                statusClass = 'status-canceled';
+              } else {
+                statusLabel = transaction.status;
+                statusClass = '';
+              }
+              return (
+                <div key={index} className="transaction-item">
+                  <div className="transaction-header">
+                    <div className="transaction-id">
+                      <strong>Mã giao dịch:</strong> {transaction.transactionId}
+                    </div>
+                    <div className="transaction-status">
+                      <span className={`status ${statusClass}`}>
+                        {statusLabel}
+                      </span>
+                    </div>
                   </div>
-                  <div className="transaction-status">
-                    <span className={`status ${transaction.status}`}>
-                      {transaction.status === 'completed' ? 'Hoàn thành' : transaction.status}
-                    </span>
+                  
+                  <div className="transaction-details">
+                    <div className="detail-row">
+                      <span className="label">Mã đơn hàng:</span>
+                      <span className="value">#{transaction.orderId}</span>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <span className="label">Tên khách hàng:</span>
+                      <span className="value">{transaction.orderName}</span>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <span className="label">Email:</span>
+                      <span className="value">{transaction.orderEmail}</span>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <span className="label">Số tiền:</span>
+                      <span className="value amount">{formatPrice(transaction.amount)}</span>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <span className="label">Phương thức thanh toán:</span>
+                      <span className="value">{transaction.content}</span>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <span className="label">Thời gian:</span>
+                      <span className="value">{formatDateTime(transaction.datetime)}</span>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="transaction-details">
-                  <div className="detail-row">
-                    <span className="label">Mã đơn hàng:</span>
-                    <span className="value">#{transaction.orderId}</span>
-                  </div>
-                  
-                  <div className="detail-row">
-                    <span className="label">Tên khách hàng:</span>
-                    <span className="value">{transaction.orderName}</span>
-                  </div>
-                  
-                  <div className="detail-row">
-                    <span className="label">Email:</span>
-                    <span className="value">{transaction.orderEmail}</span>
-                  </div>
-                  
-                  <div className="detail-row">
-                    <span className="label">Số tiền:</span>
-                    <span className="value amount">{formatPrice(transaction.amount)}</span>
-                  </div>
-                  
-                  <div className="detail-row">
-                    <span className="label">Phương thức thanh toán:</span>
-                    <span className="value">{transaction.content}</span>
-                  </div>
-                  
-                  <div className="detail-row">
-                    <span className="label">Thời gian:</span>
-                    <span className="value">{formatDateTime(transaction.datetime)}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

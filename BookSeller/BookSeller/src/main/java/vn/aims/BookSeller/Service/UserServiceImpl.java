@@ -70,6 +70,9 @@ public User updateUser(int id, UserUpdateRequest u) {
     // Cập nhật thông tin
     user.setUsername(u.getUsername());
     user.setPhone(u.getPhone());
+    if (u.getEmail() != null && !u.getEmail().isEmpty()) {
+        user.setEmail(u.getEmail());
+    }
 
     // Nếu người dùng nhập mật khẩu mới thì mới encode
     if (u.getPassword() != null && !u.getPassword().isEmpty()) {

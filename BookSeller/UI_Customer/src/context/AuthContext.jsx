@@ -8,8 +8,15 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
+    const updatedUser = {
+      ...userData,
+      cart: {
+        cartId: userData.cartId,
+      },
+    };
+
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
   const logout = () => {
@@ -24,17 +31,20 @@ export const AuthProvider = ({ children }) => {
       try {
         const userData = JSON.parse(storedUser);
         if (userData && typeof userData === "object") {
+          if (!userData.cart && userData.cartId) {
+            userData.cart = { cartId: userData.cartId };
+          }
           setUser(userData);
         }
       } catch (error) {
         console.error("Lỗi khi parse dữ liệu user:", error);
-        localStorage.removeItem("user"); // Xóa dữ liệu không hợp lệ
+        localStorage.removeItem("user");
       }
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout,setUser }}>
+    <AuthContext.Provider value={{ user, login, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );

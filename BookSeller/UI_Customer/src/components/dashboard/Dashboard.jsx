@@ -45,28 +45,34 @@ const Dashboard = () => {
         ]);
 
         // Log để debug
-        console.log('Response từ API:', {
+        console.log("Response từ API:", {
           productStatus: productRes.status,
           productData: productRes.data,
           orderStatus: orderRes.status,
-          orderData: orderRes.data
+          orderData: orderRes.data,
         });
 
         // Xử lý dữ liệu
-        const productData = Array.isArray(productRes.data) ? productRes.data : [];
+        const productData = Array.isArray(productRes.data)
+          ? productRes.data
+          : [];
         const orders = Array.isArray(orderRes.data) ? orderRes.data : [];
 
         // Log sau khi xử lý
-        console.log('Dữ liệu sau khi xử lý:', {
+        console.log("Dữ liệu sau khi xử lý:", {
           products: productData,
-          orders: orders
+          orders: orders,
         });
 
         const pendingOrdersCount = orders.filter(
-          (order) => order.status === "0"
+          (order) => order.status === "CREATED"
         ).length;
 
         setProducts(productData);
+
+        const totalRevenue = orders
+          .filter((order) => order.status === "APPROVED")
+          .reduce((sum, order) => sum + (order.finalAmount || 0), 0);
 
         setStats([
           {
@@ -89,9 +95,8 @@ const Dashboard = () => {
             color: "orange",
           },
           {
-            title: "Doanh thu hôm nay",
-            value: "đ2,450,000",
-            change: "+8% so với tháng trước",
+            title: "Doanh thu",
+            value: `đ${totalRevenue.toLocaleString()}`,
             changeType: "positive",
             icon: DollarSign,
             color: "orange",

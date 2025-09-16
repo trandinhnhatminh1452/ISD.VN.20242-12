@@ -4,9 +4,9 @@ import "./Home.scss";
 import RecommendedBooks from "../../components/recommendedBook/recommendedBook";
 
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND'
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
   }).format(price);
 };
 
@@ -27,7 +27,7 @@ const Home = () => {
         const data = await response.json();
         setProducts(data.content || []);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error("Error fetching products:", error);
       }
     };
 
@@ -44,42 +44,42 @@ const Home = () => {
         const data = await response.json();
         setCategories(data || []);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
       }
     };
 
     fetchCategories();
   }, []);
 
-  React.useEffect(() => {
-    setMembers([
-      {
-        id: 1,
-        name: "Dương Tuấn Nghĩa",
-        image: "/member/Screenshot 2025-05-29 222210.png",
-      },
-      {
-        id: 2,
-        name: "Bùi Việt Hưng",
-        image: "/member/Screenshot 2025-05-29 152846.png",
-      },
-      {
-        id: 3,
-        name: "Trần Đình Nhật Minh",
-        image: "/member/Screenshot 2025-05-29 222108.png",
-      },
-      {
-        id: 4,
-        name: "Đặng Thành Tựu",
-        image: "https://randomuser.me/api/portraits/women/4.jpg",
-      },
-      {
-        id: 5,
-        name: "Bùi Quang Tùng",
-        image: "https://randomuser.me/api/portraits/men/5.jpg",
-      },
-    ]);
-  }, []);
+  // React.useEffect(() => {
+  //   setMembers([
+  //     {
+  //       id: 1,
+  //       name: "Dương Tuấn Nghĩa",
+  //       image: "/member/Screenshot 2025-05-29 222210.png",
+  //     },
+  //     {
+  //       id: 2,
+  //       name: "Bùi Việt Hưng",
+  //       image: "/member/Screenshot 2025-05-29 152846.png",
+  //     },
+  //     {
+  //       id: 3,
+  //       name: "Trần Đình Nhật Minh",
+  //       image: "/member/Screenshot 2025-05-29 222108.png",
+  //     },
+  //     {
+  //       id: 4,
+  //       name: "Đặng Thành Tựu",
+  //       image: "https://randomuser.me/api/portraits/women/4.jpg",
+  //     },
+  //     {
+  //       id: 5,
+  //       name: "Bùi Quang Tùng",
+  //       image: "https://randomuser.me/api/portraits/men/5.jpg",
+  //     },
+  //   ]);
+  // }, []);
 
   return (
     <div className="home-page">
@@ -96,7 +96,7 @@ const Home = () => {
       </div>
 
       {/* Member Profiles Section */}
-      <section className="member-section">
+      {/* <section className="member-section">
         <div className="member-container">
           <div className="title-border">
             <Link to="/about" className="title-module">
@@ -112,7 +112,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Suggested Books Section */}
       <RecommendedBooks

@@ -98,13 +98,19 @@
           border: 1px solid rgba(46, 204, 113, 0.3);
         }
         
-        &.pending {
+        &.status-pending {
           background: rgba(241, 196, 15, 0.2);
           color: #f39c12;
           border: 1px solid rgba(241, 196, 15, 0.3);
         }
         
-        &.failed {
+        &.status-success {
+          background: rgba(46, 204, 113, 0.2);
+          color: #27ae60;
+          border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        
+        &.status-canceled {
           background: rgba(231, 76, 60, 0.2);
           color: #e74c3c;
           border: 1px solid rgba(231, 76, 60, 0.3);

@@ -8,7 +8,9 @@ const Support = () => {
   return (
     <>
       <div className="breadcrumb">
-        <Link to="/" className="breadcrumb-link">Trang chủ</Link>
+        <Link to="/" className="breadcrumb-link">
+          Trang chủ
+        </Link>
         <FaAngleRight className="breadcrumb-sep" />
         <span className="breadcrumb-current">Hỗ trợ</span>
       </div>
@@ -53,7 +55,7 @@ const Support = () => {
               </div>
               <div className="contact-item">
                 <h3>Email hỗ trợ</h3>
-                <p>support@nhanam.vn</p>
+                <p>support@g12.vn</p>
               </div>
               <div className="contact-item">
                 <h3>Giờ làm việc</h3>
